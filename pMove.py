@@ -28,6 +28,7 @@ def pMove(x, y, direction, pro, fib, vegf, xSteps, ySteps, lamda, k):
     else:
         T[3] = 0
 
+    # probability equations from page 153 and 152
     if y == 0:
         pmove = 2 * lamda * k * T[direction] / (T[0]+T[1])
     else:
