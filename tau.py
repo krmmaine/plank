@@ -14,8 +14,10 @@ def tau(c, f, v, y):
     gamma6 = 20
 
     if y == 0:
+        # equation 50
         return (((c + k10) / (c + k11)) ** gamma1) * (((f + k12) / (f + k13)) ** gamma2) * (
-                    ((v + k14) / (v + k15)) ** gamma3)  # EQ50
+                    ((v + k14) / (v + k15)) ** gamma3)
     else:
+        # equation 58
         return (((c + k27) / (c + k28)) ** gamma4) * (((f + k29) / (f + k30)) ** gamma5) * (
-                    ((v + k31) / (v + k32)) ** gamma6)  # EQ58
+                    ((v + k31) / (v + k32)) ** gamma6)
