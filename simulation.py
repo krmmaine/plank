@@ -7,6 +7,16 @@ from move import move
 from updatePro import updatePro
 from updateVEGF import updateVEGF
 from updateFib import updateFib
+from numpy import zeros
+
+from scipy import spatial
+import math
+import matplotlib.pyplot as plt
+import numpy as np
+from mpl_toolkits import mplot3d
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+
 
 
 def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld, densityScale, lamda, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld):
@@ -15,6 +25,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
     k26 = .00001859
     m1 = 2
     fibThreshold = 0.6
+    workspace = zeros((ySteps, xSteps))
 
     # Cycle through time steps
     for time in range(numTimeSteps-1):
@@ -99,8 +110,58 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                         if fibcap < fibThreshold:
                             rand = 2
                     move(cell, time, stay, left, right, down, rand, yPos, xPos, occupied)
+                    workspace[xPos[cell][time]][yPos[cell][time]] = 1000
+
         updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength)
         updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
         updatePro(ySubstrate, xSteps, densityScale, occupiedOld, pro, proOld, k, vegfOld)
-        print("simulation loop complete. check variables")
+
+        if time % 1000 == 0:
+            plt.imshow(workspace)
+            cm.get_cmap("jet")
+            plt.show()
+
+            fig = plt.figure()
+            ax = plt.gca(projection='3d')
+
+            X = np.arange(0, xSteps, 1)
+            Y = np.arange(0, ySubstrate, 1)
+            X, Y = np.meshgrid(X, Y)
+
+            Z = vegf
+
+            surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1,
+                                   cmap='viridis', edgecolor='none')
+            ax.set_title('vegf')
+            plt.show()
+
+            fig = plt.figure()
+            ax = plt.gca(projection='3d')
+
+            X = np.arange(0, xSteps, 1)
+            Y = np.arange(0, ySubstrate, 1)
+            X, Y = np.meshgrid(X, Y)
+
+            Z = fib
+
+            surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1,
+                                   cmap='viridis', edgecolor='none')
+            ax.set_title('fibronectin')
+            plt.show()
+
+            fig = plt.figure()
+            ax = plt.gca(projection='3d')
+
+            X = np.arange(0, xSteps, 1)
+            Y = np.arange(0, ySubstrate, 1)
+            X, Y = np.meshgrid(X, Y)
+
+            Z = pro
+
+            surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1,
+                                   cmap='viridis', edgecolor='none')
+            ax.set_title('protease')
+            plt.show()
+    print("simulation loop complete. check variables")
+
     return
