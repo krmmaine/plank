@@ -11,20 +11,20 @@ from simulation import simulation
 def main():
     yLength = 0.5
     xLength = 1
-    xSteps = 200
-    ySteps = int(xSteps * (yLength/xLength))
+    xSteps = 201
+    ySteps = int(xSteps * (yLength/xLength) + 0.5)  # need to add the 0.5 so that it rounds to the correct number
     xSubstrate = xSteps * 2 - 1
     ySubstrate = ySteps * 2 - 1
     # totNumCells must be less than or equal to xStep so there will be a place to put all the cells
-    totNumCells = 5
+    totNumCells = 2
     densityScale = totNumCells/xSteps
     maxCell = 100
     numTimeSteps = 21600
     totalTime = 0.06912
-    xPos = zeros((maxCell, numTimeSteps))
-    yPos = zeros((maxCell, numTimeSteps))
+    xPos = zeros((maxCell, numTimeSteps), dtype=int)
+    yPos = zeros((maxCell, numTimeSteps), dtype=int)
     tolerance = 0.000001
-    deathTime = zeros(maxCell)
+    deathTime = zeros(maxCell, dtype=int)
 
     vegf = zeros((ySubstrate, xSteps))
     pro = zeros((ySubstrate, xSteps))
@@ -33,8 +33,8 @@ def main():
     proOld = zeros((ySubstrate, xSteps))
     fibOld = ones((ySubstrate, xSteps))
 
-    occupied = zeros((ySteps, xSteps))
-    occupiedOld = zeros((ySteps, xSteps))
+    occupied = zeros((ySteps, xSteps), dtype=int)
+    occupiedOld = zeros((ySteps, xSteps), dtype=int)
 
     k = timePerStep(totalTime, numTimeSteps)
     h = stepSize(xLength, xSteps)
