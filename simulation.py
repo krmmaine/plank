@@ -79,7 +79,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                 # If protease level has gone down then there is no contribution to proliferation
                 if proAtTimeMinus1 > proAtTime:
                     proAtTimeMinus1 = proAtTime
-                if densityScale * occupied[y][xSteps] > densityMax:
+                if densityScale * occupied[y][x] > densityMax:
                     logistic = 0
                 else:
                     logistic = 1 - densityScale * occupied[y][x] / densityMax
@@ -91,32 +91,32 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
 
                 # NEED TO FIGURE OUT PROLIFERATION AND CELL DEATH
 
-                # DETERMINE IF/WHERE THE CELL MOVES
+            # DETERMINE IF/WHERE THE CELL MOVES
 
-                if deathTime[cell] == numTimeSteps - 1:
-                    stay = pStay(y, lamda, k)
-                    left = pMove(x, y, 0, pro, fib, vegf, xSteps, ySteps, lamda, k)
-                    right = pMove(x, y, 1, pro, fib, vegf, xSteps, ySteps, lamda, k)
-                    down = pMove(x, y, 2, pro, fib, vegf, xSteps, ySteps, lamda, k)
-                    rand = random()
-                    # Check if cell can escape the capillary
-                    if y == 0:
-                        if x == 0:
-                            fibcap = fib[0][0]
-                        elif x == xSteps - 1:
-                            fibcap = fib[0][xSteps-2]
-                        else:
-                            fibcap = (fib[0][x-1] + fib[0][x]) / 2
-                        if fibcap < fibThreshold:
-                            rand = 2
-                    move(cell, time, stay, left, right, down, rand, yPos, xPos, occupied)
-                    workspace[xPos[cell][time]][yPos[cell][time]] = 1000
+            if deathTime[cell] == numTimeSteps - 1:
+                stay = pStay(y, lamda, k)
+                left = pMove(x, y, 0, pro, fib, vegf, xSteps, ySteps, lamda, k)
+                right = pMove(x, y, 1, pro, fib, vegf, xSteps, ySteps, lamda, k)
+                down = pMove(x, y, 2, pro, fib, vegf, xSteps, ySteps, lamda, k)
+                rand = random()
+                # Check if cell can escape the capillary
+                if y == 0:
+                    if x == 0:
+                        fibcap = fib[0][0]
+                    elif x == xSteps - 1:
+                        fibcap = fib[0][xSteps-2]
+                    else:
+                        fibcap = (fib[0][x-1] + fib[0][x]) / 2
+                    if fibcap < fibThreshold:
+                        rand = 2
+                move(cell, time, stay, left, right, down, rand, yPos, xPos, occupied)
+                workspace[yPos[cell][time]][xPos[cell][time]] = 1000
 
         updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength)
         updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
         updatePro(ySubstrate, xSteps, densityScale, occupiedOld, pro, proOld, k, vegfOld)
 
-        if time % 1000 == 0:
+        if time % 500 == 0:
             plt.imshow(workspace)
             cm.get_cmap("jet")
             plt.show()
