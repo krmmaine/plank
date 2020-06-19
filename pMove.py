@@ -12,7 +12,7 @@ def pMove(x, y, direction, pro, fib, vegf, xSteps, ySteps, lamda, k):
 
     # RIGHT
     if x < xSteps-1:
-        T[1] = tau(pro[2*y][x], fib[2*y][x], vegf[2*y][x], y)
+        T[1] = tau(pro[2*y][x], fib[2*y][x], vegf[2*y][x], y)       # don't need to add 1 to x because the x substrate should be offset by a half step from the cell matrix meshpoints
     else:
         T[1] = 0
 
