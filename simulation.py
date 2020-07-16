@@ -8,6 +8,7 @@ from updatePro import updatePro
 from updateVEGF import updateVEGF
 from updateFib import updateFib
 from numpy import zeros
+from graph import createGraph
 
 from scipy import spatial
 import math
@@ -115,7 +116,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
         updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength)
         updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
         updatePro(ySubstrate, xSteps, densityScale, occupiedOld, pro, proOld, k, vegfOld)
-
+        '''
         if time % 500 == 0:
             plt.imshow(workspace)
             cm.get_cmap("jet")
@@ -162,6 +163,9 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                                    cmap='viridis', edgecolor='none')
             ax.set_title('protease')
             plt.show()
+            '''
+        if time % 100 == 0:
+            createGraph(ySubstrate, xSteps, vegf)
     print("simulation loop complete. check variables")
 
     return
