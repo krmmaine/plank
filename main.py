@@ -7,8 +7,12 @@ from stepSize import stepSize
 from lamda import lamda
 from simulation import simulation
 
+import time
+
 
 def main():
+    start = time.time()
+    print(start)
     yLength = 0.5
     xLength = 1
     xSteps = 201
@@ -44,8 +48,9 @@ def main():
     simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
                densityScale, lam, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld)
     print("finished yay!!")
+    print(time.time())
+    print(time.time()-start)
 
     return
-
 
 main()
