@@ -27,7 +27,7 @@ def main():
     totalTime = 0.06912
     xPos = zeros((maxCell, numTimeSteps), dtype=int)
     yPos = zeros((maxCell, numTimeSteps), dtype=int)
-    tolerance = 0.000001
+    tolerance = 0.001
     deathTime = zeros(maxCell, dtype=int)
 
     vegf = zeros((ySubstrate, xSteps))
