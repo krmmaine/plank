@@ -8,6 +8,9 @@ from lamda import lamda
 from simulation import simulation
 
 import time
+from numpy import linspace
+from matplotlib import pyplot
+from mpl_toolkits import mplot3d            # Still need this even though is seems unnecessary
 
 
 def main():
@@ -44,9 +47,30 @@ def main():
     h = stepSize(xLength, xSteps)
     lam = lamda(xLength, h)
 
+    xVector = []
+    yVector = []
+
+    xEvenVector = []
+    for x in linspace(0.5, xSteps - 1.5, num=xSteps - 1):
+        xEvenVector.append(x)
+
+    xOddVector = []
+    for x in linspace(0, xSteps - 1, num=xSteps):
+        xOddVector.append(x)
+
+    for y in range(ySubstrate):
+        if y % 2 == 0:
+            for i in xEvenVector:
+                xVector.append(i)
+                yVector.append(y)
+        else:
+            for j in xOddVector:
+                xVector.append(j)
+                yVector.append(y)
+
     init(xSteps, totNumCells, xPos, yPos, occupied, deathTime, numTimeSteps)
     simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
-               densityScale, lam, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld)
+               densityScale, lam, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector)
     print("finished yay!!")
     print(time.time())
     print(time.time()-start)
