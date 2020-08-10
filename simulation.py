@@ -19,8 +19,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 
 
-
-def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld, densityScale, lamda, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld):
+def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld, densityScale, lamda, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector):
     densityMax = 6
     k25 = 5736.899771
     k26 = .00001859
@@ -116,8 +115,10 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
         updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength)
         updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
         updatePro(ySubstrate, xSteps, densityScale, occupiedOld, pro, proOld, k, vegfOld)
-        '''
-        if time % 500 == 0:
+
+        print(time)
+
+        if time % 10 == 0:
             plt.imshow(workspace)
             cm.get_cmap("jet")
             plt.show()
@@ -125,47 +126,9 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
             fig = plt.figure()
             ax = plt.gca(projection='3d')
 
-            X = np.arange(0, xSteps, 1)
-            Y = np.arange(0, ySubstrate, 1)
-            X, Y = np.meshgrid(X, Y)
-
-            Z = vegf
-
-            surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1,
-                                   cmap='viridis', edgecolor='none')
-            ax.set_title('vegf')
-            plt.show()
-
-            fig = plt.figure()
-            ax = plt.gca(projection='3d')
-
-            X = np.arange(0, xSteps, 1)
-            Y = np.arange(0, ySubstrate, 1)
-            X, Y = np.meshgrid(X, Y)
-
-            Z = fib
-
-            surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1,
-                                   cmap='viridis', edgecolor='none')
-            ax.set_title('fibronectin')
-            plt.show()
-
-            fig = plt.figure()
-            ax = plt.gca(projection='3d')
-
-            X = np.arange(0, xSteps, 1)
-            Y = np.arange(0, ySubstrate, 1)
-            X, Y = np.meshgrid(X, Y)
-
-            Z = pro
-
-            surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1,
-                                   cmap='viridis', edgecolor='none')
-            ax.set_title('protease')
-            plt.show()
-            '''
-        if time % 100 == 0:
-            createGraph(ySubstrate, xSteps, vegf)
+            createGraph(ySubstrate, xSteps, vegf, xVector, yVector)
+            createGraph(ySubstrate, xSteps, fib, xVector, yVector)
+            createGraph(ySubstrate, xSteps, pro, xVector, yVector)
     print("simulation loop complete. check variables")
 
     return
