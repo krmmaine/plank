@@ -15,7 +15,6 @@ from mpl_toolkits import mplot3d            # Still need this even though is see
 
 def main():
     start = time.time()
-    print(start)
     yLength = 0.5
     xLength = 1
     xSteps = 201
@@ -71,9 +70,8 @@ def main():
     init(xSteps, totNumCells, xPos, yPos, occupied, deathTime, numTimeSteps)
     simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
                densityScale, lam, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector)
-    print("finished yay!!")
-    print(time.time())
-    print(time.time()-start)
+    print("time elapsed:\n")
+    print(str((time.time()-start)/60/60) + "hours")
 
     return
 
