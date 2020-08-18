@@ -15,7 +15,7 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
     k33 = 0.00036
     v = zeros((ySubstrate, xSteps))
 
-    # update VEGF concentration in capillary
+# update VEGF concentration in capillary
     for x in range(xSteps - 1):
         # scaled by densityScale to get density instead of the number of cells
         # average density at cell meshpoints to the right and left of the substrate meshpoint
@@ -32,7 +32,7 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
         if vegf[0][x] < 0:
             vegf[0][x] = 0
 
-    # initialize v: value of the previous time step
+# initialize v: value of the previous time step
     for y in range(1, ySubstrate, 1):
         if y % 2 == 0:
             for x in range(xSteps - 1):
@@ -41,12 +41,12 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
             for x in range(xSteps):
                 v[y][x] = vegf[y][x]
 
-    # Keep iterating until the value of v at each meshpoint changes by less than a certain tolerance
+# Keep iterating until the value of v at each meshpoint changes by less than a certain tolerance
     intol = 0
     while intol == 0:
         intol = 1
 
-        # update VEGF concentration at boundary at maximum y. includes source
+    # update VEGF concentration at boundary at maximum y. includes source
         # using equation 70 derivation on page 179 calculate vegf at x = 0
         vOld = v[ySubstrate - 1][0]
         v[ySubstrate - 1][0] = v[ySubstrate - 1][1]
@@ -65,11 +65,11 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
         # using equation 70 derivation on page 179 calculate vegf at x = max
         vOld = v[ySubstrate - 1][xSteps - 2]
         v[ySubstrate - 1][xSteps - 2] = v[ySubstrate - 1][
-            xSteps - 3]  # minus 3 because row is even (still don't understand why that is important
+            xSteps - 3]  # minus 3 because row is even
         if v[ySubstrate - 1][xSteps - 2] - vOld > tolerance or v[ySubstrate - 1][xSteps - 2] - vOld < -tolerance:
             intol = 0
 
-        # update VEGF concentration at boundary at maximum y - 1
+    # update VEGF concentration at boundary at maximum y - 1
         # using equation 70 derivation on page 179 calculate vegf at x = 0
         vOld = v[ySubstrate - 2][0]
         v[ySubstrate - 2][0] = v[ySubstrate - 2][1]
@@ -84,13 +84,13 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
             if v[ySubstrate - 2][x] - vOld > tolerance or v[ySubstrate - 2][x] - vOld < -tolerance:
                 intol = 0
 
-            # using equation 70 derivation on page 179 calculate vegf at x = max
-            vOld = v[ySubstrate - 2][xSteps - 1]
-            v[ySubstrate - 2][xSteps - 1] = v[ySubstrate - 2][xSteps - 2]
-            if v[ySubstrate - 2][xSteps - 1] - vOld > tolerance or v[ySubstrate - 2][xSteps - 1] - vOld < -tolerance:
-                intol = 0
+        # using equation 70 derivation on page 179 calculate vegf at x = max
+        vOld = v[ySubstrate - 2][xSteps - 1]
+        v[ySubstrate - 2][xSteps - 1] = v[ySubstrate - 2][xSteps - 2]
+        if v[ySubstrate - 2][xSteps - 1] - vOld > tolerance or v[ySubstrate - 2][xSteps - 1] - vOld < -tolerance:
+            intol = 0
 
-        # Cycle through interior rows and calculate new VEGF concentration
+    # Cycle through interior rows and calculate new VEGF concentration
         for y in range(ySubstrate - 3, 2, -1):
             # using equation 70 derivation on page 179 calculate vegf at x = 0
             vOld = v[y][0]
@@ -98,7 +98,7 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
             if v[y][0] - vOld > tolerance or v[y][0] - vOld < -tolerance:
                 intol = 0
 
-            # if row is even number of substrate meshpoints in x is nn-1
+            # if row is even number of substrate meshpoints in x is xsteps-1
             if y % 2 == 0:
                 for x in range(1, xSteps - 2, 1):  # minus 2 because last meshpoint has a boundary condition
                     # densityScale is squared because density in ECM is per unit area not length
@@ -141,7 +141,7 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
                 if v[y][xSteps - 1] - vOld > tolerance or v[y][xSteps - 1] - vOld < -tolerance:
                     intol = 0
 
-        # calculate VEGF concentration at boundary row y = 2
+    # calculate VEGF concentration at boundary row y = 2
         # using equation 70 derivation on page 179 calculate vegf at x = 0
         vOld = v[2][0]
         v[2][0] = v[2][1]
@@ -162,7 +162,7 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
         if v[2][xSteps - 2] - vOld > tolerance or v[2][xSteps - 2] - vOld < -tolerance:
             intol = 0
 
-        # calculate VEGF concentratin at boundary row y = 1: capillary wall
+    # calculate VEGF concentratin at boundary row y = 1: capillary wall
         vOld = v[1][0]
         v[1][0] = v[1][1]
         if v[1][0] - vOld > tolerance or v[1][0] - vOld < -tolerance:
