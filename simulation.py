@@ -118,7 +118,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
 
         print(time)
 
-        if time % 10 == 0:
+        if time % 1000 == 0:
             plt.imshow(workspace)
             cm.get_cmap("jet")
             plt.show()
@@ -129,6 +129,5 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
             createGraph(ySubstrate, xSteps, vegf, xVector, yVector)
             createGraph(ySubstrate, xSteps, fib, xVector, yVector)
             createGraph(ySubstrate, xSteps, pro, xVector, yVector)
-    print("simulation loop complete. check variables")
 
     return
