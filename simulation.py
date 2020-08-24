@@ -48,48 +48,6 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                 if y == ySteps - 1:
                     deathTime[cell] = time
                     occupied[y][x] -= 1
-                # Calculate average protease at surrounding substrate meshpoints at time and time minus 1
-                proAtTime = 0
-                proAtTimeMinus1 = 0
-                count = 0
-                # Protease to the left
-                if x > 0:
-                    proAtTime = proAtTime + pro[2*y][x-1]
-                    proAtTimeMinus1 = proAtTimeMinus1 + proOld[2*y][x-1]
-                    count += 1
-                # Protease to the right
-                if x < xSteps - 1:
-                    proAtTime = proAtTime + pro[2*y][x]
-                    proAtTimeMinus1 = proAtTimeMinus1 + proOld[2*y][x]
-                    count += 1
-                # Protease below
-                if y > 0:
-                    proAtTime = proAtTime + pro[2*y-1][x]
-                    proAtTimeMinus1 = proAtTimeMinus1 + proOld[2*y-1][x]
-                    count += 1
-                # Protease above
-                if y < ySteps - 1:
-                    proAtTime = proAtTime + pro[2*y+1][x]
-                    proAtTimeMinus1 = proAtTimeMinus1 + proOld[2*y+1][x]
-                    count += 1
-
-                proAtTime = proAtTime/count
-                proAtTimeMinus1 = proAtTimeMinus1/count
-
-                # If protease level has gone down then there is no contribution to proliferation
-                if proAtTimeMinus1 > proAtTime:
-                    proAtTimeMinus1 = proAtTime
-                if densityScale * occupied[y][x] > densityMax:
-                    logistic = 0
-                else:
-                    logistic = 1 - densityScale * occupied[y][x] / densityMax
-
-                G = k25 * exp(-k26 * proAtTime ** m1) * (1 - k26 * m1 * proAtTime ** m1) / \
-                    (1 + k25 * proAtTime * exp(-k26 * proAtTime ** m1))
-                if G < 0:
-                    G = 0
-
-                # NEED TO FIGURE OUT PROLIFERATION AND CELL DEATH
 
             # DETERMINE IF/WHERE THE CELL MOVES
 
@@ -110,7 +68,8 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                     if fibcap < fibThreshold:
                         rand = 2
                 move(cell, time, stay, left, right, down, rand, yPos, xPos, occupied)
-                workspace[yPos[cell][time]][xPos[cell][time]] = 1000
+                workspace[yPos[cell][time]][xPos[cell][time]] = 2
+                workspace[yPos[cell][time+1]][xPos[cell][time+1]] = 5
 
         updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength)
         updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
