@@ -21,5 +21,6 @@ def createGraph(ySubstrate, xSteps, vegf, xVector, yVector):
     ax.plot_trisurf(xVector, yVector, zVector,
                     cmap='viridis', edgecolor='none')
     pyplot.show()
+    f = open("graphs.png", "a")
 
     return
