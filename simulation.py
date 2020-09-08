@@ -19,7 +19,9 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 
 
-def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld, densityScale, lamda, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector):
+def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
+               densityScale, lamda, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector,
+                movedUp, movedDown, movedLeft, movedRight):
     densityMax = 6
     k25 = 5736.899771
     k26 = .00001859
@@ -67,7 +69,8 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                         fibcap = (fib[0][x-1] + fib[0][x]) / 2
                     if fibcap < fibThreshold:
                         rand = 2
-                move(cell, time, stay, left, right, down, rand, yPos, xPos, occupied)
+                move(cell, time, stay, left, right, down, rand, yPos, xPos, occupied, fib, vegf, pro, movedUp,
+                     movedDown, movedLeft, movedRight)
                 workspace[yPos[cell][time]][xPos[cell][time]] = 2
                 workspace[yPos[cell][time+1]][xPos[cell][time+1]] = 5
 
@@ -77,7 +80,12 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
 
         print(time)
 
-        if time % 1000 == 0:
+        if time % 100 == 0:
+            print("probability right = " + str(right))
+            print("probability left = " + str(left))
+            print("probability down = " + str(down))
+            print("probability up = " + str(1 - stay - left - right - down))
+
             plt.imshow(workspace)
             cm.get_cmap("jet")
             plt.show()
