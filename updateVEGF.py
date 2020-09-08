@@ -15,6 +15,8 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
     k33 = 0.00036
     v = zeros((ySubstrate, xSteps))
 
+    densitySum = 0  #Check that the density values sum up to 1
+
 # update VEGF concentration in capillary
     for x in range(xSteps - 1):
         # scaled by densityScale to get density instead of the number of cells
@@ -103,7 +105,8 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
                 for x in range(1, xSteps - 2, 1):  # minus 2 because last meshpoint has a boundary condition
                     # densityScale is squared because density in ECM is per unit area not length
                     # average density of cell meshpoint to the right and left
-                    density = densityScale ** 2 * (occupiedOld[y // 2][x] + occupiedOld[y // 2][x + 1]) / 2
+                    density = densityScale * ((ySubstrate/2)-1) * (occupiedOld[y // 2][x] + occupiedOld[y // 2][x + 1]) / 2
+                    densitySum += density
                     vOld = v[y][x]
                     # Approximate equation 53 using the crank-nicolson method see derivation on page 178
                     # relax is the successive over-relaxation term
@@ -125,7 +128,8 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
                 for x in range(1, xSteps - 1, 1):
                     # average density of cell meshpoints above and below
                     # y // 2 because there are twice as many points in the y direction because substrate meshpoints are at 1/2
-                    density = densityScale ** 2 * (occupiedOld[(y - 1) // 2][x] + occupiedOld[(y + 1) // 2][x]) / 2
+                    density = densityScale * ((ySubstrate/2)-1) * (occupiedOld[(y - 1) // 2][x] + occupiedOld[(y + 1) // 2][x]) / 2
+                    densitySum += density
                     vOld = v[y][x]
                     v[y][x] = relax / (h * h + 2 * k21 * k) * (
                                 0.5 * k21 * k * (v[y][x + 1] + v[y][x - 1] + v[y + 2][x] + v[y - 2][x]
@@ -195,5 +199,7 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
                 vegf[y][x] = v[y][x]
                 if vegf[y][x] < 0:
                     vegf[y][x] = 0
+
+    print(densitySum)
 
     return
