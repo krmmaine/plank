@@ -10,7 +10,7 @@ from simulation import simulation
 import time
 from numpy import linspace
 from matplotlib import pyplot
-from mpl_toolkits import mplot3d            # Still need this even though is seems unnecessary
+from mpl_toolkits import mplot3d            # Still need this even though it seems unnecessary
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
     xSubstrate = xSteps * 2 - 1
     ySubstrate = ySteps * 2 - 1
     # totNumCells must be less than or equal to xStep so there will be a place to put all the cells
-    totNumCells = 2
+    totNumCells = 1
     densityScale = totNumCells/xSteps
     maxCell = 100
     numTimeSteps = 21600
@@ -67,9 +67,15 @@ def main():
                 xVector.append(j)
                 yVector.append(y)
 
+    movedUp = 0
+    movedDown = 0
+    movedLeft = 0
+    movedRight = 0
+
     init(xSteps, totNumCells, xPos, yPos, occupied, deathTime, numTimeSteps)
     simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
-               densityScale, lam, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector)
+               densityScale, lam, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector,
+               movedUp, movedDown, movedLeft, movedRight)
     print("time elapsed:\n")
     print(str((time.time()-start)/60/60) + "hours")
 
