@@ -33,4 +33,4 @@ def move(cell, time, stay, left, right, down, random, yPos, xPos, occupied, fib,
         print("moves right: = " + str(movedRight))
         print("moves left: " + str(movedLeft))
 
-    return xPos, yPos, occupied
+    return movedUp, movedDown, movedLeft, movedRight
