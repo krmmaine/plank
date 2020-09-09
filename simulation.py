@@ -69,7 +69,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                         fibcap = (fib[0][x-1] + fib[0][x]) / 2
                     if fibcap < fibThreshold:
                         rand = 2
-                move(cell, time, stay, left, right, down, rand, yPos, xPos, occupied, fib, vegf, pro, movedUp,
+                movedUp, movedDown, movedLeft, movedRight = move(cell, time, stay, left, right, down, rand, yPos, xPos, occupied, fib, vegf, pro, movedUp,
                      movedDown, movedLeft, movedRight)
                 workspace[yPos[cell][time]][xPos[cell][time]] = 2
                 workspace[yPos[cell][time+1]][xPos[cell][time+1]] = 5
