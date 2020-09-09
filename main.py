@@ -23,7 +23,7 @@ def main():
     ySubstrate = ySteps * 2 - 1
     # totNumCells must be less than or equal to xStep so there will be a place to put all the cells
     totNumCells = 1
-    densityScale = totNumCells/xSteps
+    densityScale = xSteps/totNumCells
     maxCell = 100
     numTimeSteps = 21600
     totalTime = 0.06912
