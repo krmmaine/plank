@@ -17,6 +17,8 @@ import numpy as np
 from mpl_toolkits import mplot3d
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
+from matplotlib import pyplot
+import matplotlib.backends.backend_pdf
 
 
 def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
@@ -80,21 +82,13 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
 
         print(time)
 
-        if time % 100 == 0:
+        if time % 500 == 0:
+            '''
             print("probability right = " + str(right))
             print("probability left = " + str(left))
             print("probability down = " + str(down))
             print("probability up = " + str(1 - stay - left - right - down))
-
-            plt.imshow(workspace)
-            cm.get_cmap("jet")
-            plt.show()
-
-            fig = plt.figure()
-            ax = plt.gca(projection='3d')
-
-            createGraph(ySubstrate, xSteps, vegf, xVector, yVector)
-            createGraph(ySubstrate, xSteps, fib, xVector, yVector)
-            createGraph(ySubstrate, xSteps, pro, xVector, yVector)
+            '''
+            createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
 
     return
