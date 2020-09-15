@@ -23,7 +23,7 @@ import matplotlib.backends.backend_pdf
 
 def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
                densityScale, lamda, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector,
-                movedUp, movedDown, movedLeft, movedRight):
+               movement):
     densityMax = 6
     k25 = 5736.899771
     k26 = .00001859
@@ -71,8 +71,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                         fibcap = (fib[0][x-1] + fib[0][x]) / 2
                     if fibcap < fibThreshold:
                         rand = 2
-                movedUp, movedDown, movedLeft, movedRight = move(cell, time, stay, left, right, down, rand, yPos, xPos, occupied, fib, vegf, pro, movedUp,
-                     movedDown, movedLeft, movedRight)
+                move(cell, time, stay, left, right, down, rand, yPos, xPos, occupied, fib, vegf, pro, movement)
                 workspace[yPos[cell][time]][xPos[cell][time]] = 2
                 workspace[yPos[cell][time+1]][xPos[cell][time+1]] = 5
 
@@ -80,15 +79,9 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
         updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
         updatePro(ySubstrate, xSteps, densityScale, occupiedOld, pro, proOld, k, vegfOld)
 
-        print(time)
+        print("time = " + str(time))
 
-        if time % 500 == 0:
-            '''
-            print("probability right = " + str(right))
-            print("probability left = " + str(left))
-            print("probability down = " + str(down))
-            print("probability up = " + str(1 - stay - left - right - down))
-            '''
+        if time % 5000 == 0:
             createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
 
     return
