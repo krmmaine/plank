@@ -67,15 +67,12 @@ def main():
                 xVector.append(j)
                 yVector.append(y)
 
-    movedUp = 0
-    movedDown = 0
-    movedLeft = 0
-    movedRight = 0
+    movement = []
 
     init(xSteps, totNumCells, xPos, yPos, occupied, deathTime, numTimeSteps)
     simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
                densityScale, lam, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector,
-               movedUp, movedDown, movedLeft, movedRight)
+               movement)
     print("time elapsed:\n")
     print(str((time.time()-start)/60/60) + "hours")
 
