@@ -1,41 +1,77 @@
-def move(cell, time, stay, left, right, down, random, yPos, xPos, occupied, fib, vegf, pro, movement):
+def move(cell, time, stay, left, right, up, random, yPos, xPos, occupied, fib, vegf, pro, movement, file):
 
-    file = open("tracking_backtracks.txt", "w")
-
-    # UP
-    if random > stay + left + right + down:
+    # DOWN
+    if random > stay + left + right + up:
         yPos[cell][time+1] = yPos[cell][time] + 1
         if yPos[cell][time] > 0:
             movement.append(0)
             if len(movement) > 1:
                 if movement[len(movement)-2] == 1:
                     print("backtrack")
-                    file.write("BACKTRACK: time = " + str(time))
-                    file.write("moved up")
-                    file.write("fib: " + str(fib[yPos[cell][time+1]][xPos[cell][time]]))
-                    file.write("vegf: " + str(vegf[yPos[cell][time+1]][xPos[cell][time]]))
-                    file.write("pro: " + str(pro[yPos[cell][time+1]][xPos[cell][time]]))
-                    file.write("prob up = " + str(1-left-right-down-stay))
-                    file.write("prob down = " + str(down))
-                    file.write("prob right = " + str(right))
-                    file.write("prob left = " + str(left))
+                    file.write("\n\nBACKTRACK: time = " + str(time) + "\n")
+                    file.write("moved down\n\n")
 
-    # DOWN
+                    file.write("substrate concentrations to the right: \n")
+                    file.write("fib: " + str(fib[yPos[cell][time]][xPos[cell][time] + 1]) + "\n")
+                    file.write("vegf: " + str(vegf[yPos[cell][time]][xPos[cell][time] + 1]) + "\n")
+                    file.write("pro: " + str(pro[yPos[cell][time]][xPos[cell][time] + 1]) + "\n\n")
+
+                    file.write("substrate concentrations to the left: \n")
+                    file.write("fib: " + str(fib[yPos[cell][time]][xPos[cell][time] - 1]) + "\n")
+                    file.write("vegf: " + str(vegf[yPos[cell][time]][xPos[cell][time] - 1]) + "\n")
+                    file.write("pro: " + str(pro[yPos[cell][time]][xPos[cell][time] - 1]) + "\n\n")
+
+                    file.write("substrate concentrations to the up: \n")
+                    file.write("fib: " + str(fib[yPos[cell][time] - 1][xPos[cell][time]]) + "\n")
+                    file.write("vegf: " + str(vegf[yPos[cell][time] - 1][xPos[cell][time]]) + "\n")
+                    file.write("pro: " + str(pro[yPos[cell][time] - 1][xPos[cell][time]]) + "\n\n")
+
+                    file.write("substrate concentrations to the down: \n")
+                    file.write("fib: " + str(fib[yPos[cell][time] + 1][xPos[cell][time]]) + "\n")
+                    file.write("vegf: " + str(vegf[yPos[cell][time] + 1][xPos[cell][time]]) + "\n")
+                    file.write("pro: " + str(pro[yPos[cell][time] + 1][xPos[cell][time]]) + "\n\n")
+
+                    file.write("prob down = " + str(1 - left - right - up - stay) + "\n")
+                    file.write("prob up = " + str(up) + "\n")
+                    file.write("prob right = " + str(right) + "\n")
+                    file.write("prob left = " + str(left) + "\n")
+                    file.write("prob stay = " + str(stay) + "\n")
+
+    # UP
     elif random > stay + left + right:
         yPos[cell][time+1] = yPos[cell][time] - 1
         if yPos[cell][time] > 0:
             movement.append(1)
             if movement[len(movement) - 2] == 0:
                 print("backtrack")
-                file.write("BACKTRACK: time = " + str(time))
-                file.write("moved down")
-                file.write("fib: " + str(fib[yPos[cell][time + 1]][xPos[cell][time]]))
-                file.write("vegf: " + str(vegf[yPos[cell][time + 1]][xPos[cell][time]]))
-                file.write("pro: " + str(pro[yPos[cell][time + 1]][xPos[cell][time]]))
-                file.write("prob up = " + str(1 - left - right - down - stay))
-                file.write("prob down = " + str(down))
-                file.write("prob right = " + str(right))
-                file.write("prob left = " + str(left))
+                file.write("\n\nBACKTRACK: time = " + str(time) + "\n")
+                file.write("moved up\n\n")
+
+                file.write("substrate concentrations to the right: \n")
+                file.write("fib: " + str(fib[yPos[cell][time]][xPos[cell][time] + 1]) + "\n")
+                file.write("vegf: " + str(vegf[yPos[cell][time]][xPos[cell][time] + 1]) + "\n")
+                file.write("pro: " + str(pro[yPos[cell][time]][xPos[cell][time] + 1]) + "\n\n")
+
+                file.write("substrate concentrations to the left: \n")
+                file.write("fib: " + str(fib[yPos[cell][time]][xPos[cell][time] - 1]) + "\n")
+                file.write("vegf: " + str(vegf[yPos[cell][time]][xPos[cell][time] - 1]) + "\n")
+                file.write("pro: " + str(pro[yPos[cell][time]][xPos[cell][time] - 1]) + "\n\n")
+
+                file.write("substrate concentrations to the up: \n")
+                file.write("fib: " + str(fib[yPos[cell][time] - 1][xPos[cell][time]]) + "\n")
+                file.write("vegf: " + str(vegf[yPos[cell][time] - 1][xPos[cell][time]]) + "\n")
+                file.write("pro: " + str(pro[yPos[cell][time] - 1][xPos[cell][time]]) + "\n\n")
+
+                file.write("substrate concentrations to the down: \n")
+                file.write("fib: " + str(fib[yPos[cell][time] + 1][xPos[cell][time]]) + "\n")
+                file.write("vegf: " + str(vegf[yPos[cell][time] + 1][xPos[cell][time]]) + "\n")
+                file.write("pro: " + str(pro[yPos[cell][time] + 1][xPos[cell][time]]) + "\n\n")
+
+                file.write("prob down = " + str(1 - left - right - up - stay) + "\n")
+                file.write("prob up = " + str(up) + "\n")
+                file.write("prob right = " + str(right) + "\n")
+                file.write("prob left = " + str(left) + "\n")
+                file.write("prob stay = " + str(stay) + "\n")
 
     # RIGHT
     elif random > stay + left:
@@ -44,15 +80,34 @@ def move(cell, time, stay, left, right, down, random, yPos, xPos, occupied, fib,
             movement.append(2)
             if movement[len(movement) - 2] == 3:
                 print("backtrack")
-                file.write("BACKTRACK: time = " + str(time))
-                file.write("moved right")
-                file.write("fib: " + str(fib[yPos[cell][time]][xPos[cell][time + 1]]))
-                file.write("vegf: " + str(vegf[yPos[cell][time]][xPos[cell][time + 1]]))
-                file.write("pro: " + str(pro[yPos[cell][time]][xPos[cell][time + 1]]))
-                file.write("prob up = " + str(1 - left - right - down - stay))
-                file.write("prob down = " + str(down))
-                file.write("prob right = " + str(right))
-                file.write("prob left = " + str(left))
+                file.write("\n\nBACKTRACK: time = " + str(time) + "\n")
+                file.write("moved right\n\n")
+
+                file.write("substrate concentrations to the right: \n")
+                file.write("fib: " + str(fib[yPos[cell][time]][xPos[cell][time] + 1]) + "\n")
+                file.write("vegf: " + str(vegf[yPos[cell][time]][xPos[cell][time] + 1]) + "\n")
+                file.write("pro: " + str(pro[yPos[cell][time]][xPos[cell][time] + 1]) + "\n\n")
+
+                file.write("substrate concentrations to the left: \n")
+                file.write("fib: " + str(fib[yPos[cell][time]][xPos[cell][time] - 1]) + "\n")
+                file.write("vegf: " + str(vegf[yPos[cell][time]][xPos[cell][time] - 1]) + "\n")
+                file.write("pro: " + str(pro[yPos[cell][time]][xPos[cell][time] - 1]) + "\n\n")
+
+                file.write("substrate concentrations to the up: \n")
+                file.write("fib: " + str(fib[yPos[cell][time] - 1][xPos[cell][time]]) + "\n")
+                file.write("vegf: " + str(vegf[yPos[cell][time] - 1][xPos[cell][time]]) + "\n")
+                file.write("pro: " + str(pro[yPos[cell][time] - 1][xPos[cell][time]]) + "\n\n")
+
+                file.write("substrate concentrations to the down: \n")
+                file.write("fib: " + str(fib[yPos[cell][time] + 1][xPos[cell][time]]) + "\n")
+                file.write("vegf: " + str(vegf[yPos[cell][time] + 1][xPos[cell][time]]) + "\n")
+                file.write("pro: " + str(pro[yPos[cell][time] + 1][xPos[cell][time]]) + "\n\n")
+
+                file.write("prob down = " + str(1 - left - right - up - stay) + "\n")
+                file.write("prob up = " + str(up) + "\n")
+                file.write("prob right = " + str(right) + "\n")
+                file.write("prob left = " + str(left) + "\n")
+                file.write("prob stay = " + str(stay) + "\n")
 
     # LEFT
     elif random > stay:
@@ -61,21 +116,38 @@ def move(cell, time, stay, left, right, down, random, yPos, xPos, occupied, fib,
             movement.append(3)
             if movement[len(movement) - 2] == 2:
                 print("backtrack")
-                file.write("BACKTRACK: time = " + str(time))
-                file.write("moved left")
-                file.write("fib: " + str(fib[yPos[cell][time]][xPos[cell][time + 1]]))
-                file.write("vegf: " + str(vegf[yPos[cell][time]][xPos[cell][time + 1]]))
-                file.write("pro: " + str(pro[yPos[cell][time]][xPos[cell][time + 1]]))
-                file.write("prob up = " + str(1 - left - right - down - stay))
-                file.write("prob down = " + str(down))
-                file.write("prob right = " + str(right))
-                file.write("prob left = " + str(left))
+                file.write("\n\nBACKTRACK: time = " + str(time) + "\n")
+                file.write("moved left\n\n")
+
+                file.write("substrate concentrations to the right: \n")
+                file.write("fib: " + str(fib[yPos[cell][time]][xPos[cell][time] + 1]) + "\n")
+                file.write("vegf: " + str(vegf[yPos[cell][time]][xPos[cell][time] + 1]) + "\n")
+                file.write("pro: " + str(pro[yPos[cell][time]][xPos[cell][time] + 1]) + "\n\n")
+
+                file.write("substrate concentrations to the left: \n")
+                file.write("fib: " + str(fib[yPos[cell][time]][xPos[cell][time] - 1]) + "\n")
+                file.write("vegf: " + str(vegf[yPos[cell][time]][xPos[cell][time] - 1]) + "\n")
+                file.write("pro: " + str(pro[yPos[cell][time]][xPos[cell][time] - 1]) + "\n\n")
+
+                file.write("substrate concentrations to the up: \n")
+                file.write("fib: " + str(fib[yPos[cell][time] - 1][xPos[cell][time]]) + "\n")
+                file.write("vegf: " + str(vegf[yPos[cell][time] - 1][xPos[cell][time]]) + "\n")
+                file.write("pro: " + str(pro[yPos[cell][time] - 1][xPos[cell][time]]) + "\n\n")
+
+                file.write("substrate concentrations to the down: \n")
+                file.write("fib: " + str(fib[yPos[cell][time] + 1][xPos[cell][time]]) + "\n")
+                file.write("vegf: " + str(vegf[yPos[cell][time] + 1][xPos[cell][time]]) + "\n")
+                file.write("pro: " + str(pro[yPos[cell][time] + 1][xPos[cell][time]]) + "\n\n")
+
+                file.write("prob down = " + str(1 - left - right - up - stay) + "\n")
+                file.write("prob up = " + str(up) + "\n")
+                file.write("prob right = " + str(right) + "\n")
+                file.write("prob left = " + str(left) + "\n")
+                file.write("prob stay = " + str(stay) + "\n")
 
     # update occupancy based on cell movement
     if random > stay:
         occupied[yPos[cell][time]][xPos[cell][time]] -= 1
         occupied[yPos[cell][time+1]][xPos[cell][time+1]] += 1
 
-    file.close()
-
-    return movement
+    return file
