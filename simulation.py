@@ -30,6 +30,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
     m1 = 2
     fibThreshold = 0.6
     workspace = zeros((ySteps, xSteps))
+    file = open("tracking_backtracks.txt", "w")
 
     # Cycle through time steps
     for time in range(numTimeSteps-1):
@@ -59,7 +60,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                 stay = pStay(y, lamda, k)
                 left = pMove(x, y, 0, pro, fib, vegf, xSteps, ySteps, lamda, k)
                 right = pMove(x, y, 1, pro, fib, vegf, xSteps, ySteps, lamda, k)
-                down = pMove(x, y, 2, pro, fib, vegf, xSteps, ySteps, lamda, k)
+                up = pMove(x, y, 2, pro, fib, vegf, xSteps, ySteps, lamda, k)
                 rand = random()
                 # Check if cell can escape the capillary
                 if y == 0:
@@ -71,7 +72,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                         fibcap = (fib[0][x-1] + fib[0][x]) / 2
                     if fibcap < fibThreshold:
                         rand = 2
-                move(cell, time, stay, left, right, down, rand, yPos, xPos, occupied, fib, vegf, pro, movement)
+                file = move(cell, time, stay, left, right, up, rand, yPos, xPos, occupied, fib, vegf, pro, movement, file)
                 workspace[yPos[cell][time]][xPos[cell][time]] = 2
                 workspace[yPos[cell][time+1]][xPos[cell][time+1]] = 5
 
@@ -81,7 +82,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
 
         print("time = " + str(time))
 
-        if time % 5000 == 0:
+        if time % 2000 == 0:
             createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
 
     return
