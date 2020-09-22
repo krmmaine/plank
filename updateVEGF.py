@@ -6,7 +6,7 @@ from xCoordinate import xCoordinate
 
 
 def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength):
-    k1 = 52923.07639
+    k1 = 51923.07639
     k2 = 694.4444444
     k35 = 0.0129462015
     k21 = 10
