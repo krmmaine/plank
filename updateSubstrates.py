@@ -9,7 +9,7 @@ from xCoordinate import xCoordinate
 def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, fib, fibOld, pro, proOld, k, tolerance, h, xLength):
     f = zeros((ySubstrate, xSteps))
     v = zeros((ySubstrate, xSteps))
-    k1 = 52923.07639  # note: discrepancy between k1 values in different update functions
+    k1 = 51923.07639  # note: discrepancy between k1 values in different update functions
     k2 = 694.4444444
     k3 = 3166.6666667
     k4 = 154.3209877
@@ -80,8 +80,6 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
     # updated.
     intolv = 0
     intolf = 0
-    pupdated = 0 # the pupdated value signifies whether the protease has been updated, so that it is not evaluated
-                    # multiple times.
     while intolv == 0 or intolf == 0:
         if intolv == 0:
             intolv = 1
@@ -111,7 +109,6 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
                 v[ySubstrate - 1][x] = k35 * h * (
                             (1 - cos(2 * pi * xCoordinate(x, ySubstrate - 1, xSteps, xLength))) ** m0) \
                                        + v[ySubstrate - 3][x]
-                print(v[ySubstrate - 1][x] - vOld, intolv)
                 if v[ySubstrate - 1][x] - vOld > tolerance or v[ySubstrate - 1][x] - vOld < -tolerance:
                     intolv = 0
             if intolf != 2:
@@ -316,7 +313,6 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
                 if f[2][x] - fOld > tolerance or f[2][x] - fOld < -tolerance:
                     intolf = 0
 
-
         if intolv != 2:
             # using equation 70 derivation on page 179 calculate vegf at x = max
             vOld = v[2][xSteps - 2]
@@ -369,78 +365,76 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
             f[1][xSteps - 1] = f[1][xSteps - 2]
             if f[1][xSteps - 1] - fOld > tolerance or f[1][xSteps - 1] - fOld < -tolerance:
                 intolf = 0
+        if intolv == 1:
+            intolv = 2
+        if intolf == 1:
+            intolf = 2
 
     # Cycle through meshpoints and set VEGF and fib at time step j+1
-        for y in range(1, ySubstrate, 1):
-            if intolv != 2:
-                # if y is even: number of substrate meshpoints in x is xSteps - 1
-                if y % 2 == 0:
-                    for x in range(xSteps - 1):
-                        vegfOld[y][x] = vegf[y][x]
-                        vegf[y][x] = v[y][x]
-                        if vegf[y][x] < 0:
-                            vegf[y][x] = 0
-                # if y is odd: number of substrate meshpoints in x is xSteps
-                else:
-                    for x in range(xSteps):
-                        vegfOld[y][x] = vegf[y][x]
-                        vegf[y][x] = v[y][x]
-                        if vegf[y][x] < 0:
-                            vegf[y][x] = 0
-            if intolf != 2:
-                if y % 2 == 0:
-                    for x in range(xSteps - 1):
-                        fibOld[y][x] = fib[y][x]
-                        fib[y][x] = f[y][x]
-                        if fib[y][x] < 0:
-                            fib[y][x] = 0
-                        if fib[y][x] > 1:
-                            fib[y][x] = 1
-                else:
-                    for x in range(xSteps):
-                        fibOld[y][x] = fib[y][x]
-                        fib[y][x] = f[y][x]
-                        if fib[y][x] < 0:
-                            fib[y][x] = 0
-                        if fib[y][x] > 1:
-                            fib[y][x] = 1
-            if pupdated == 0:
-                # If y is even, number of substrate meshpoints in x-direction is xSteps-1
-                if y % 2 == 0:
-                    for x in range(xSteps - 1):
-                        # Average density at cell meshpoints to the right and left of substrate meshpoint at time j
-                        density = densityScale ** 2 * (occupiedOld[y // 2][x] + occupiedOld[y // 2][x + 1]) / 2
+    for y in range(1, ySubstrate, 1):
+        if intolv != 2:
+            # if y is even: number of substrate meshpoints in x is xSteps - 1
+            if y % 2 == 0:
+                for x in range(xSteps - 1):
+                    vegfOld[y][x] = vegf[y][x]
+                    vegf[y][x] = v[y][x]
+                    if vegf[y][x] < 0:
+                        vegf[y][x] = 0
+            # if y is odd: number of substrate meshpoints in x is xSteps
+            else:
+                for x in range(xSteps):
+                    vegfOld[y][x] = vegf[y][x]
+                    vegf[y][x] = v[y][x]
+                    if vegf[y][x] < 0:
+                        vegf[y][x] = 0
+        if intolf != 2:
+            if y % 2 == 0:
+                for x in range(xSteps - 1):
+                    fibOld[y][x] = fib[y][x]
+                    fib[y][x] = f[y][x]
+                    if fib[y][x] < 0:
+                        fib[y][x] = 0
+                    if fib[y][x] > 1:
+                        fib[y][x] = 1
+            else:
+                for x in range(xSteps):
+                    fibOld[y][x] = fib[y][x]
+                    fib[y][x] = f[y][x]
+                    if fib[y][x] < 0:
+                        fib[y][x] = 0
+                    if fib[y][x] > 1:
+                        fib[y][x] = 1
+        if intolv == 1 and intolf == 1: # both substrates have reached the end of iteration, update p
+            # If y is even, number of substrate meshpoints in x-direction is xSteps-1
+            if y % 2 == 0:
+                for x in range(xSteps - 1):
+                    # Average density at cell meshpoints to the right and left of substrate meshpoint at time j
+                    density = densityScale ** 2 * (occupiedOld[y // 2][x] + occupiedOld[y // 2][x + 1]) / 2
+                    proOld[y][x] = pro[y][x]
+                    # use equation 54 (same as 47 but for the ECM instead of the capillary)
+                    pro[y][x] = pro[y][x] + k * (
+                                k1 * vegfOld[y][x] * density / (vegfOld[y][x] + 1) - k3 * pro[y][x])
+                    if pro[y][x] < 0:
+                        pro[y][x] = 0
+            # If y is odd, number of substrate meshpoints in x-direction is xSteps
+            # Do not update at protease boundary y=1, because that value was already updated earlier.
+            else:
+                for x in range(xSteps):
+                    if y == 1:
+                        # don't take into account cells still in the capillary
+                        density = densityScale ** 2 * occupiedOld[1][x]
+                        proOld[1][x] = pro[1][x]
+                        # use equation 54 (same as 47 but for the ECM instead of the capillary)
+                        pro[1][x] = pro[1][x] + k * (
+                                    k1 * vegfOld[1][x] * density / (vegfOld[1][x] + 1) - k3 * pro[1][x])
+                        if pro[1][x] < 0:
+                            pro[1][x] = 0
+                    else:
+                        # Average density at cell meshpoints above and below substrate meshpoint at time j
+                        density = densityScale ** 2 * (occupiedOld[(y - 1) // 2][x] + occupiedOld[(y + 1) // 2][x]) / 2
                         proOld[y][x] = pro[y][x]
                         # use equation 54 (same as 47 but for the ECM instead of the capillary)
                         pro[y][x] = pro[y][x] + k * (
                                     k1 * vegfOld[y][x] * density / (vegfOld[y][x] + 1) - k3 * pro[y][x])
                         if pro[y][x] < 0:
                             pro[y][x] = 0
-                # If y is odd, number of substrate meshpoints in x-direction is xSteps
-                # Do not update at protease boundary y=1, because that value was already updated earlier.
-                else:
-                    for x in range(xSteps):
-                        if y == 1:
-                            # don't take into account cells still in the capillary
-                            density = densityScale ** 2 * occupiedOld[1][x]
-                            proOld[1][x] = pro[1][x]
-                            # use equation 54 (same as 47 but for the ECM instead of the capillary)
-                            pro[1][x] = pro[1][x] + k * (
-                                        k1 * vegfOld[1][x] * density / (vegfOld[1][x] + 1) - k3 * pro[1][x])
-                            if pro[1][x] < 0:
-                                pro[1][x] = 0
-                        else:
-                            # Average density at cell meshpoints above and below substrate meshpoint at time j
-                            density = densityScale ** 2 * (occupiedOld[(y - 1) // 2][x] + occupiedOld[(y + 1) // 2][x]) / 2
-                            proOld[y][x] = pro[y][x]
-                            # use equation 54 (same as 47 but for the ECM instead of the capillary)
-                            pro[y][x] = pro[y][x] + k * (
-                                        k1 * vegfOld[y][x] * density / (vegfOld[y][x] + 1) - k3 * pro[y][x])
-                            if pro[y][x] < 0:
-                                pro[y][x] = 0
-                pupdated = 1;
-
-        if intolv == 1:
-            intolv = 2
-        if intolf == 1:
-            intolf = 2
