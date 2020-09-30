@@ -69,7 +69,8 @@ def main():
 
     init(xSteps, totNumCells, xPos, yPos, occupied, deathTime, numTimeSteps)
     simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
-               densityScale, lam, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector)
+               densityScale, lam, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector,
+               0, 0, 0, 0)
     print("time elapsed:\n")
     print(str((time.time()-start)/60/60) + "hours")
 
