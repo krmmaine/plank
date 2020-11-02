@@ -21,7 +21,7 @@ def main():
     ySteps = int(xSteps * (yLength/xLength) + 0.5)  # need to add the 0.5 so that it rounds to the correct number
     ySubstrate = ySteps * 2 - 1
     # totNumCells must be less than or equal to xStep so there will be a place to put all the cells
-    totNumCells = 1
+    totNumCells = 3
     densityScale = xSteps/totNumCells
     maxCell = 100
     numTimeSteps = 21600
@@ -30,6 +30,8 @@ def main():
     yPos = zeros((maxCell, numTimeSteps), dtype=int)
     tolerance = 0.001
     deathTime = zeros(maxCell, dtype=int)
+    birthTime = zeros(maxCell, dtype=int)
+    divideTime = zeros(maxCell, dtype=int)
 
     vegf = zeros((ySubstrate, xSteps))
     pro = zeros((ySubstrate, xSteps))
@@ -71,7 +73,7 @@ def main():
     init(xSteps, totNumCells, xPos, yPos, occupied, deathTime, numTimeSteps)
     simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
                densityScale, lam, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector,
-               movement)
+               movement, maxCell, birthTime, divideTime)
     print("time elapsed:\n")
     print(str((time.time()-start)/60/60) + "hours")
 
