@@ -54,6 +54,11 @@ def createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace,
     ax = fig.add_subplot(4, 1, 4, projection='3d')
     ax.plot_trisurf(xVector, yVector, PROzVector, cmap='viridis', edgecolor='none')
 
+    # 2D VEGF graph
+    # ax = fig.add_subplot(5, 1, 5)
+    # ax.imshow(vegf)
+    # cm.get_cmap("jet")
+
     pyplot.savefig(fileName)
     file.close()
 
