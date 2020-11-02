@@ -23,14 +23,18 @@ import matplotlib.backends.backend_pdf
 
 def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
                densityScale, lamda, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector,
-               movement):
+               movement, maxCell, birthTime, divideTime):
     densityMax = 6
+    k18 = 0.55555555
+    k20 = 0.0496031736
     k25 = 5736.899771
     k26 = .00001859
     m1 = 2
+    child = 0.25
     fibThreshold = 0.6
     workspace = zeros((ySteps, xSteps))
     file = open("tracking_backtracks.txt", "w")
+    file2 = open("prolif_death.txt", "w")
 
     # Cycle through time steps
     for time in range(numTimeSteps-1):
@@ -54,13 +58,116 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                     deathTime[cell] = time
                     occupied[y][x] -= 1
 
-            # DETERMINE IF/WHERE THE CELL MOVES
+                # calculate average protease values at time and time-1
+                # surrounding mesh points usually equals 4 unless it is a boundary condition
+                proMinus0 = 0
+                proMinus1 = 0
+                count = 0
 
+                #LEFT
+                if x > 0:
+                    proMinus0 = proMinus0 + pro[2*y][x-1]
+                    proMinus1 = proMinus1 + proOld[2*y][x-1]
+                    count += 1
+
+                #RIGHT
+                if x < xSteps-1:
+                    proMinus0 = proMinus0 + pro[2*y][x]
+                    proMinus1 = proMinus1 + proOld[2*y][x]
+                    count += 1
+
+                #UP
+                if y > 0:
+                    proMinus0 = proMinus0 + pro[2*y-1][x]
+                    proMinus1 = proMinus1 + proOld[2*y-1][x]
+                    count += 1
+
+                #DOWN
+                if y < ySteps:
+                    proMinus0 = proMinus0 + pro[2*y+1][x-1]
+                    proMinus1 = proMinus1 + proOld[2*y+1][x-1]
+                    count += 1
+
+                proMinus0 = proMinus0 / count
+                proMinus1 = proMinus1 / count
+
+                if densityScale * occupied[y][x] > densityMax:
+                    logistic = 0
+                else:
+                    logistic = 1 - densityScale * occupied[y][x] / densityMax
+
+                G = k25 * (exp(-k26*proMinus0**m1)*(1-k26*m1*proMinus0**m1)) / (1+k25*proMinus0*exp(-k26*proMinus0**m1))
+
+                proDependent = G * (proMinus0 - proMinus1) / k
+
+                if proDependent >= 0:
+                    divideProb = (k * k18 + G * logistic * (proMinus0 - proMinus1)) * \
+                                 heaviside(time - divideTime[cell] - child * numTimeSteps)
+                    deathProb = k * k20
+                else:
+                    divideProb = k * k18 * heaviside(time - divideTime[cell] - child * numTimeSteps)
+                    deathProb = k * k20 - G * (proMinus0 - proMinus1)
+
+                # not sure if I need this part
+                #if divideProb < 0:
+                #    divideProb = 0
+                #if divideProb > 1 - deathProb:
+                #    divideProb = 1
+
+                randomNum = random()
+
+                if randomNum < deathProb:
+                    file2.write("\n\nTIME: " + str(time) + "\n")
+                    file2.write("average protease at time - 1 : " + str(proMinus1) + "\n")
+                    file2.write("average protease at time: " + str(proMinus0) + "\n")
+                    file2.write("logistic growth term: " + str(logistic) + "\n")
+                    file2.write("Protease dependent term: " + str(proDependent) + "\n")
+                    file2.write("Probability of division: " + str(divideProb) + "\n")
+                    file2.write("Probability of death: " + str(deathProb) + "\n")
+                    file2.write("Probability of doing nothing: " + str(1 - deathProb - divideProb) + "\n")
+                    file2.write("CELL DIED")
+                    deathTime[cell] = time
+                    occupied[y][x] -= 1
+
+                elif randomNum < deathProb + divideProb:
+                    if totNumCells == maxCell:
+                        break
+                    else:
+                        file2.write("\n\nTIME: " + str(time) + "\n")
+                        file2.write("average protease at time - 1 : " + str(proMinus1) + "\n")
+                        file2.write("average protease at time: " + str(proMinus0) + "\n")
+                        file2.write("logistic growth term: " + str(logistic) + "\n")
+                        file2.write("Protease dependent term: " + str(proDependent) + "\n")
+                        file2.write("Probability of division: " + str(divideProb) + "\n")
+                        file2.write("Probability of death: " + str(deathProb) + "\n")
+                        file2.write("Probability of doing nothing: " + str(1 - deathProb - divideProb) + "\n")
+                        file2.write("CELL DIVIDED")
+                        # totNumCells because when indexing in 2 is actually at the third spot
+                        xPos[totNumCells][time] = x
+                        yPos[totNumCells][time] = y
+                        occupied[y][x] += 1
+                        deathTime[totNumCells] = numTimeSteps - 1
+                        birthTime[totNumCells] = time
+                        divideTime[cell] = time
+                        totNumCells += 1
+                else:
+                    if time % 500 == 0:
+                        file2.write("\n\nTIME: " + str(time) + "\n")
+                        file2.write("average protease at time - 1 : " + str(proMinus1) + "\n")
+                        file2.write("average protease at time: " + str(proMinus0) + "\n")
+                        file2.write("logistic growth term: " + str(logistic) + "\n")
+                        file2.write("Protease dependent term: " + str(proDependent) + "\n")
+                        file2.write("Probability of division: " + str(divideProb) + "\n")
+                        file2.write("Probability of death: " + str(deathProb) + "\n")
+                        file2.write("Probability of doing nothing: " + str(1 - deathProb - divideProb) + "\n")
+                        file2.write("CELL DOES NOTHING")
+
+            # DETERMINE IF/WHERE THE CELL MOVES
             if deathTime[cell] == numTimeSteps - 1:
                 stay = pStay(y, lamda, k)
-                left = pMove(x, y, 0, pro, fib, vegf, xSteps, ySteps, lamda, k)
-                right = pMove(x, y, 1, pro, fib, vegf, xSteps, ySteps, lamda, k)
-                up = pMove(x, y, 2, pro, fib, vegf, xSteps, ySteps, lamda, k)
+                left, T = pMove(x, y, 0, pro, fib, vegf, xSteps, ySteps, lamda, k)
+                right, T = pMove(x, y, 1, pro, fib, vegf, xSteps, ySteps, lamda, k)
+                up, T = pMove(x, y, 2, pro, fib, vegf, xSteps, ySteps, lamda, k)
                 rand = random()
                 # Check if cell can escape the capillary
                 if y == 0:
@@ -72,7 +179,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                         fibcap = (fib[0][x-1] + fib[0][x]) / 2
                     if fibcap < fibThreshold:
                         rand = 2
-                file = move(cell, time, stay, left, right, up, rand, yPos, xPos, occupied, fib, vegf, pro, movement, file)
+                file = move(cell, time, stay, left, right, up, rand, yPos, xPos, occupied, fib, vegf, pro, movement, file, T)
                 workspace[yPos[cell][time]][xPos[cell][time]] = 2
                 workspace[yPos[cell][time+1]][xPos[cell][time+1]] = 5
 
