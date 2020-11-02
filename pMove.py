@@ -34,4 +34,4 @@ def pMove(x, y, direction, pro, fib, vegf, xSteps, ySteps, lamda, k):
     else:
         pmove = 4 * lamda * k * T[direction] / (T[0]+T[1]+T[2]+T[3])
 
-    return pmove
+    return pmove, T
