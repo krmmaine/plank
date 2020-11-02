@@ -1,4 +1,4 @@
-def move(cell, time, stay, left, right, up, random, yPos, xPos, occupied, fib, vegf, pro, movement, file):
+def move(cell, time, stay, left, right, up, random, yPos, xPos, occupied, fib, vegf, pro, movement, file, T):
 
     # DOWN
     if random > stay + left + right + up:
@@ -37,6 +37,11 @@ def move(cell, time, stay, left, right, up, random, yPos, xPos, occupied, fib, v
                     file.write("prob left = " + str(left) + "\n")
                     file.write("prob stay = " + str(stay) + "\n")
 
+                    file.write("left chemoattractance" + str(T[0]) + "\n")
+                    file.write("right chemoattractance" + str(T[1]) + "\n")
+                    file.write("up chemoattractance" + str(T[2]) + "\n")
+                    file.write("down chemoattractance" + str(T[3]) + "\n")
+
     # UP
     elif random > stay + left + right:
         yPos[cell][time+1] = yPos[cell][time] - 1
@@ -72,6 +77,11 @@ def move(cell, time, stay, left, right, up, random, yPos, xPos, occupied, fib, v
                 file.write("prob right = " + str(right) + "\n")
                 file.write("prob left = " + str(left) + "\n")
                 file.write("prob stay = " + str(stay) + "\n")
+
+                file.write("left chemoattractance" + str(T[0]) + "\n")
+                file.write("right chemoattractance" + str(T[1]) + "\n")
+                file.write("up chemoattractance" + str(T[2]) + "\n")
+                file.write("down chemoattractance" + str(T[3]) + "\n")
 
     # RIGHT
     elif random > stay + left:
@@ -109,6 +119,11 @@ def move(cell, time, stay, left, right, up, random, yPos, xPos, occupied, fib, v
                 file.write("prob left = " + str(left) + "\n")
                 file.write("prob stay = " + str(stay) + "\n")
 
+                file.write("left chemoattractance" + str(T[0]) + "\n")
+                file.write("right chemoattractance" + str(T[1]) + "\n")
+                file.write("up chemoattractance" + str(T[2]) + "\n")
+                file.write("down chemoattractance" + str(T[3]) + "\n")
+
     # LEFT
     elif random > stay:
         xPos[cell][time+1] = xPos[cell][time] - 1
@@ -144,6 +159,11 @@ def move(cell, time, stay, left, right, up, random, yPos, xPos, occupied, fib, v
                 file.write("prob right = " + str(right) + "\n")
                 file.write("prob left = " + str(left) + "\n")
                 file.write("prob stay = " + str(stay) + "\n")
+
+                file.write("left chemoattractance" + str(T[0]) + "\n")
+                file.write("right chemoattractance" + str(T[1]) + "\n")
+                file.write("up chemoattractance" + str(T[2]) + "\n")
+                file.write("down chemoattractance" + str(T[3]) + "\n")
 
     # update occupancy based on cell movement
     if random > stay:
