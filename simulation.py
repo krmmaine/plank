@@ -30,7 +30,9 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
     k25 = 5736.899771
     k26 = .00001859
     m1 = 2
-    child = 0.25
+    # child = 0.25      # 12 hours iteration 5400
+    child = 0.125     # 6 hours iteration 2700
+    # child = 0.0625      # 3 hours iteration 1350
     fibThreshold = 0.6
     workspace = zeros((ySteps, xSteps))
     file = open("tracking_backtracks.txt", "w")
@@ -53,6 +55,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
             # If cell has left the capillary
             # DETERMINE IF CELL HAS DIVIDED OR DIED
             if deathTime[cell] == numTimeSteps - 1 and y > 0:
+                # add statement to test if dead
                 # cell dies/leaves simulation if it reaches the tumour
                 if y == ySteps - 1:
                     deathTime[cell] = time
@@ -91,6 +94,8 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                 proMinus0 = proMinus0 / count
                 proMinus1 = proMinus1 / count
 
+
+                # logistic term is always 0 becauce denScale times occupied is always greater than densitymax
                 if densityScale * occupied[y][x] > densityMax:
                     logistic = 0
                 else:
@@ -101,7 +106,10 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                 proDependent = G * (proMinus0 - proMinus1) / k
 
                 if proDependent >= 0:
-                    divideProb = (k * k18 + G * logistic * (proMinus0 - proMinus1)) * \
+                    # haven't figured out logistic term yet
+                    # divideProb = (k * k18 + G * logistic * (proMinus0 - proMinus1)) * \
+                    #             heaviside(time - divideTime[cell] - child * numTimeSteps)
+                    divideProb = (k * k18 + G * (proMinus0 - proMinus1)) * \
                                  heaviside(time - divideTime[cell] - child * numTimeSteps)
                     deathProb = k * k20
                 else:
@@ -118,41 +126,53 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
 
                 if randomNum < deathProb:
                     file2.write("\n\nTIME: " + str(time) + "\n")
+                    file2.write("CELL: " + str(cell) + "\n")
+                    file2.write("cell position: y = " + str(y) + " x = " + str(x) + "\n")
                     file2.write("average protease at time - 1 : " + str(proMinus1) + "\n")
                     file2.write("average protease at time: " + str(proMinus0) + "\n")
-                    file2.write("logistic growth term: " + str(logistic) + "\n")
+                    #file2.write("logistic growth term: " + str(logistic) + "\n")
                     file2.write("Protease dependent term: " + str(proDependent) + "\n")
                     file2.write("Probability of division: " + str(divideProb) + "\n")
                     file2.write("Probability of death: " + str(deathProb) + "\n")
                     file2.write("Probability of doing nothing: " + str(1 - deathProb - divideProb) + "\n")
+                    file2.write("random number: " + str(randomNum) + "\n")
+                    file2.write("G: " + str(G) + "\n")
                     file2.write("CELL DIED")
                     deathTime[cell] = time
                     occupied[y][x] -= 1
+                    createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
 
                 elif randomNum < deathProb + divideProb:
-                    if totNumCells == maxCell:
-                        break
-                    else:
+                    if totNumCells >= maxCell:
+                        print("too many cells. DO NOT DIVIDE")
+                    elif totNumCells < maxCell:
                         file2.write("\n\nTIME: " + str(time) + "\n")
+                        file2.write("CELL: " + str(cell) + "\n")
+                        file2.write("cell position: y = " + str(y) + " x = " + str(x) + "\n")
                         file2.write("average protease at time - 1 : " + str(proMinus1) + "\n")
                         file2.write("average protease at time: " + str(proMinus0) + "\n")
-                        file2.write("logistic growth term: " + str(logistic) + "\n")
+                        #file2.write("logistic growth term: " + str(logistic) + "\n")
                         file2.write("Protease dependent term: " + str(proDependent) + "\n")
                         file2.write("Probability of division: " + str(divideProb) + "\n")
                         file2.write("Probability of death: " + str(deathProb) + "\n")
                         file2.write("Probability of doing nothing: " + str(1 - deathProb - divideProb) + "\n")
+                        file2.write("random number: " + str(randomNum) + "\n")
+                        file2.write("G: " + str(G) + "\n")
                         file2.write("CELL DIVIDED")
-                        # totNumCells because when indexing in 2 is actually at the third spot
-                        xPos[totNumCells][time] = x
-                        yPos[totNumCells][time] = y
+                        xPos[totNumCells][time+1] = x
+                        yPos[totNumCells][time+1] = y
                         occupied[y][x] += 1
                         deathTime[totNumCells] = numTimeSteps - 1
                         birthTime[totNumCells] = time
                         divideTime[cell] = time
+                        divideTime[totNumCells] = time
                         totNumCells += 1
+                        createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
+                '''
                 else:
                     if time % 500 == 0:
                         file2.write("\n\nTIME: " + str(time) + "\n")
+                        file2.write("CELL: " + str(cell) + "\n")
                         file2.write("average protease at time - 1 : " + str(proMinus1) + "\n")
                         file2.write("average protease at time: " + str(proMinus0) + "\n")
                         file2.write("logistic growth term: " + str(logistic) + "\n")
@@ -160,8 +180,10 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                         file2.write("Probability of division: " + str(divideProb) + "\n")
                         file2.write("Probability of death: " + str(deathProb) + "\n")
                         file2.write("Probability of doing nothing: " + str(1 - deathProb - divideProb) + "\n")
+                        file2.write("random number: " + str(randomNum) + "\n")
+                        file2.write("G: " + str(G) + "\n")
                         file2.write("CELL DOES NOTHING")
-
+                '''
             # DETERMINE IF/WHERE THE CELL MOVES
             if deathTime[cell] == numTimeSteps - 1:
                 stay = pStay(y, lamda, k)
@@ -180,8 +202,17 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                     if fibcap < fibThreshold:
                         rand = 2
                 file = move(cell, time, stay, left, right, up, rand, yPos, xPos, occupied, fib, vegf, pro, movement, file, T)
-                workspace[yPos[cell][time]][xPos[cell][time]] = 2
+                workspace[yPos[cell][time]][xPos[cell][time]] = 1
                 workspace[yPos[cell][time+1]][xPos[cell][time+1]] = 5
+                # workspace[yPos[cell][time + 1]][xPos[cell][time + 1]] = cell + 2            # so each cell is a different color
+
+        total = 0
+        for cell in range(totNumCells):
+            if deathTime[cell] != numTimeSteps - 1:
+                total += 1
+        if total == totNumCells:
+            print("ALL OF THE CELLS ARE DEAD")
+            break
 
         updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength)
         updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
@@ -189,7 +220,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
 
         print("time = " + str(time))
 
-        if time % 2000 == 0:
+        if time % 500 == 0:
             createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
 
     return
