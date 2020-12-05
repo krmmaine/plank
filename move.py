@@ -2,7 +2,7 @@ def move(cell, time, stay, left, right, up, random, yPos, xPos, occupied, fib, v
 
     # DOWN
     if random > stay + left + right + up:
-        yPos[cell][time+1] = yPos[cell][time] + 1
+        yPos[cell][time+1] = yPos[cell][time] + 1           # don't need to update xpos because I assumed in the beginning that xpos[cell][time+1] = xpos[cell][time]
         if yPos[cell][time] > 0:
             movement.append(0)
             if len(movement) > 1:
