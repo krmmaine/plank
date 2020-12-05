@@ -21,7 +21,7 @@ def main():
     ySteps = int(xSteps * (yLength/xLength) + 0.5)  # need to add the 0.5 so that it rounds to the correct number
     ySubstrate = ySteps * 2 - 1
     # totNumCells must be less than or equal to xStep so there will be a place to put all the cells
-    totNumCells = 3
+    totNumCells = 5
     densityScale = xSteps/totNumCells
     maxCell = 100
     numTimeSteps = 21600
