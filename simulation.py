@@ -5,6 +5,7 @@ from pStay import pStay
 from pMove import pMove
 from move import move
 from updatePro import updatePro
+from updateSubstrates import updateSubstrates
 from updateVEGF import updateVEGF
 from updateFib import updateFib
 from numpy import zeros
@@ -74,8 +75,9 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                 workspace[yPos[cell][time]][xPos[cell][time]] = 2
                 workspace[yPos[cell][time+1]][xPos[cell][time+1]] = 5
 
-        updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength)
-        updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
+        # updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength)
+        # updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
+        updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, fib, fibOld, pro, proOld, k, tolerance, h, xLength);
         updatePro(ySubstrate, xSteps, densityScale, occupiedOld, pro, proOld, k, vegfOld)
 
         print(time)
@@ -96,5 +98,10 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
             createGraph(ySubstrate, xSteps, vegf, xVector, yVector)
             createGraph(ySubstrate, xSteps, fib, xVector, yVector)
             createGraph(ySubstrate, xSteps, pro, xVector, yVector)
+
+        print("time = " + str(time))
+
+        if time % 100 == 0:
+            createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
 
     return
