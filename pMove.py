@@ -16,13 +16,13 @@ def pMove(x, y, direction, pro, fib, vegf, xSteps, ySteps, lamda, k):
     else:
         T[1] = 0
 
-    # DOWN
+    # UP
     if y > 1:
         T[2] = tau(pro[2*y-1][x], fib[2*y-1][x], vegf[2*y-1][x], y)
     else:
         T[2] = 0
 
-    # UP
+    # DOWN
     if 0 < y < ySteps - 1:
         T[3] = tau(pro[2*y+1][x], fib[2*y+1][x], vegf[2*y+1][x], y)
     else:
@@ -34,4 +34,4 @@ def pMove(x, y, direction, pro, fib, vegf, xSteps, ySteps, lamda, k):
     else:
         pmove = 4 * lamda * k * T[direction] / (T[0]+T[1]+T[2]+T[3])
 
-    return pmove
+    return pmove, T
