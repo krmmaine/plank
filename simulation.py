@@ -53,6 +53,8 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
             yPos[cell][time+1] = y
 
             # If cell has left the capillary
+            # not including dividing and death right now because it doesn't work with anastomosis
+            #'''
             # DETERMINE IF CELL HAS DIVIDED OR DIED
             if deathTime[cell] == numTimeSteps - 1 and y > 0:
                 # add statement to test if dead
@@ -168,22 +170,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                         divideTime[totNumCells] = time
                         totNumCells += 1
                         createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
-                '''
-                else:
-                    if time % 500 == 0:
-                        file2.write("\n\nTIME: " + str(time) + "\n")
-                        file2.write("CELL: " + str(cell) + "\n")
-                        file2.write("average protease at time - 1 : " + str(proMinus1) + "\n")
-                        file2.write("average protease at time: " + str(proMinus0) + "\n")
-                        file2.write("logistic growth term: " + str(logistic) + "\n")
-                        file2.write("Protease dependent term: " + str(proDependent) + "\n")
-                        file2.write("Probability of division: " + str(divideProb) + "\n")
-                        file2.write("Probability of death: " + str(deathProb) + "\n")
-                        file2.write("Probability of doing nothing: " + str(1 - deathProb - divideProb) + "\n")
-                        file2.write("random number: " + str(randomNum) + "\n")
-                        file2.write("G: " + str(G) + "\n")
-                        file2.write("CELL DOES NOTHING")
-                '''
+
             # DETERMINE IF/WHERE THE CELL MOVES
             if deathTime[cell] == numTimeSteps - 1:
                 stay = pStay(y, lamda, k)
@@ -202,9 +189,24 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                     if fibcap < fibThreshold:
                         rand = 2
                 file = move(cell, time, stay, left, right, up, rand, yPos, xPos, occupied, fib, vegf, pro, movement, file, T)
+                '''
+                # ANASTOMOSIS
+                
+                if yPos[cell][time + 1] > 0:
+                    if workspace[yPos[cell][time + 1]][xPos[cell][time + 1]] != 0 and \
+                            workspace[yPos[cell][time + 1]][xPos[cell][time + 1]] != cell + 2 and \
+                            workspace[yPos[cell][time + 1]][xPos[cell][time + 1]] != cell + 3.5:
+                        print("cell ran into another capillary")
+                        deathTime[cell] = time + 1
+                        occupied[yPos[cell][time + 1]][xPos[cell][time + 1]] -= 1
+
+                workspace[yPos[cell][time]][xPos[cell][time]] = cell + 2
+                workspace[yPos[cell][time + 1]][xPos[cell][time + 1]] = cell + 3.5
+                '''
+
+                # workspace without anastomosis
                 workspace[yPos[cell][time]][xPos[cell][time]] = 1
                 workspace[yPos[cell][time+1]][xPos[cell][time+1]] = 5
-                # workspace[yPos[cell][time + 1]][xPos[cell][time + 1]] = cell + 2            # so each cell is a different color
 
         total = 0
         for cell in range(totNumCells):
