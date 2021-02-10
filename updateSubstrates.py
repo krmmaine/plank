@@ -80,11 +80,13 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
     # when intol is 0, a check has failed and the variable is not yet within tolerance.
     # when intol is 1, the variable is temporarily within tolerance, but may not pass a check later in the loop
     # when intol is 2, the variable has passed all checks and no longer needs to be updated in the loop
-    while vintol != 2 and fintol != 2:
+    count = 0
+    while vintol != 2 or fintol != 2:
         if vintol != 2:
             vintol = 1
         if fintol != 2:
             fintol = 1
+        #print(count, 0, vintol)
 
         # update VEGF concentration at boundary at maximum y. includes source
         # using equation 70 derivation on page 179 calculate vegf at x = 0
@@ -94,6 +96,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
             # if the change in any v and vOld is greater than the tolerance then this loop will continue to run
             if v[ySubstrate - 1][0] - vOld > tolerance or v[ySubstrate - 1][0] - vOld < -tolerance:
                 vintol = 0
+        #print(count, 1, vintol)
 
         # update fibronectin concentration at boundary at maximum y. includes source
         # using equation 71 derivation on page 179 calculate fib at x = 0
@@ -119,6 +122,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
                 f[ySubstrate - 1][x] = f[ySubstrate - 3][x]
                 if f[ySubstrate - 1][x] - fOld > tolerance or f[ySubstrate - 1][x] - fOld < -tolerance:
                     fintol = 0
+        #print(count, 2, vintol)
 
         # using equation 70 derivation on page 179 calculate vegf at x = max
         if vintol != 2:
@@ -127,6 +131,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
                 xSteps - 3]  # minus 3 because row is even
             if v[ySubstrate - 1][xSteps - 2] - vOld > tolerance or v[ySubstrate - 1][xSteps - 2] - vOld < -tolerance:
                 vintol = 0
+        #print(count, 3, vintol)
 
         # using equation 71 derivation on page 179 calculate fib at x = max
         if fintol != 2:
@@ -142,6 +147,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
             v[ySubstrate - 2][0] = v[ySubstrate - 2][1]
             if v[ySubstrate - 2][0] - vOld > tolerance or v[ySubstrate - 2][0] - vOld < -tolerance:
                 vintol = 0
+        #print(count, 4, vintol)
 
         # update fib concentration at boundary at maximum y - 1
         # using equation 71 derivation on page 179 calculate fib at x = 0
@@ -166,6 +172,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
                 f[ySubstrate - 2][x] = f[ySubstrate - 4][x]
                 if f[ySubstrate - 2][x] - fOld > tolerance or f[ySubstrate - 2][x] - fOld < -tolerance:
                     fintol = 0
+        #print(count, 5, vintol)
 
         # using equation 70 derivation on page 179 calculate vegf at x = max
         if vintol != 2:
@@ -173,6 +180,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
             v[ySubstrate - 2][xSteps - 1] = v[ySubstrate - 2][xSteps - 2]
             if v[ySubstrate - 2][xSteps - 1] - vOld > tolerance or v[ySubstrate - 2][xSteps - 1] - vOld < -tolerance:
                 vintol = 0
+        #print(count, 6, vintol)
 
         # using equation 71 derivation on page 179 calculate fib at x = max
         if fintol != 2:
@@ -189,6 +197,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
                 v[y][0] = v[y][1]
                 if v[y][0] - vOld > tolerance or v[y][0] - vOld < -tolerance:
                     vintol = 0
+            #print(count, 7, vintol)
 
             # using equation 71 derivation on page 179 calculate fib at x = 0
             if fintol != 2:
@@ -230,6 +239,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
                                                                         * fib[y][x]) + (1 - relax2) * f[y][x]
                         if f[y][x] - fOld > tolerance or f[y][x] - fOld < -tolerance:
                             fintol = 0
+                #print(count, 8, vintol)
 
                 # using equation 70 derivation on page 179 calculate vegf at x = max
                 if vintol != 2:
@@ -237,6 +247,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
                     v[y][xSteps - 2] = v[y][xSteps - 3]
                     if v[y][xSteps - 2] - vOld > tolerance or v[y][xSteps - 2] - vOld < -tolerance:
                         vintol = 0
+                #print(count, 9, vintol)
 
                 # using equation 71 derivation on page 179 calculate fib at x = max
                 if fintol != 2:
@@ -276,6 +287,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
                                   + (1 - relax2) * f[y][x]
                         if f[y][x] - fOld > tolerance or f[y][x] - fOld < -tolerance:
                             fintol = 0
+                #print(count, 10, vintol)
 
                 # using equation 70 derivation on page 179 calculate vegf at x = max
                 if vintol != 2:
@@ -283,6 +295,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
                     v[y][xSteps - 1] = v[y][xSteps - 2]
                     if v[y][xSteps - 1] - vOld > tolerance or v[y][xSteps - 1] - vOld < -tolerance:
                         vintol = 0
+                #print(count, 11, vintol)
 
                 # using equation 71 derivation on page 179 calculate fib at x = max
                 if fintol != 2:
@@ -298,6 +311,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
             v[2][0] = v[2][1]
             if v[2][0] - vOld > tolerance or v[2][0] - vOld < -tolerance:
                 vintol = 0
+        #print(count, 12, vintol)
 
         # calculate fibronectin concentration at boundary row y = 2
         # using equation 71 derivation on page 179 calculate fib at x = 0
@@ -322,6 +336,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
                 f[2][x] = f[4][x]
                 if f[2][x] - fOld > tolerance or f[2][x] - fOld < -tolerance:
                     fintol = 0
+        #print(count, 13, vintol)
 
         # using equation 70 derivation on page 179 calculate vegf at x = max
         if vintol != 2:
@@ -329,6 +344,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
             v[2][xSteps - 2] = v[2][xSteps - 3]
             if v[2][xSteps - 2] - vOld > tolerance or v[2][xSteps - 2] - vOld < -tolerance:
                 vintol = 0
+        #print(count, 14, vintol)
 
         # using equation 71 derivation on page 179 calculate fib at x = max
         if fintol != 2:
@@ -343,6 +359,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
             v[1][0] = v[1][1]
             if v[1][0] - vOld > tolerance or v[1][0] - vOld < -tolerance:
                 vintol = 0
+        #print(count, 15, vintol)
 
         # using equation 71 derivation on page 179 calculate fib at x = 0
         if fintol != 2:
@@ -365,6 +382,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
                 f[1][x] = f[3][x]
                 if f[1][x] - fOld > tolerance or f[1][x] - fOld < -tolerance:
                     fintol = 0
+        #print(count, 16, vintol)
 
         # using equation 70 derivation on page 179 calculate vegf at x = max
         if vintol != 2:
@@ -372,6 +390,7 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
             v[1][xSteps - 1] = v[1][xSteps - 2]
             if v[1][xSteps - 1] - vOld > tolerance or v[1][xSteps - 1] - vOld < -tolerance:
                 vintol = 0
+        #print(count, 17, vintol)
 
         if fintol != 2:
             # using equation 71 derivation on page 179 calculate fib at x = max
@@ -384,6 +403,8 @@ def updateSubstrates(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOl
             vintol = 2
         if fintol == 1:
             fintol = 2
+        #print(count, 18, vintol)
+        count += 1
 
     # Cycle through substrate meshpoints and set VEGF and fib at time step j+1
     for y in range(1, ySubstrate, 1):
