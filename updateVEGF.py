@@ -5,11 +5,19 @@ from math import pi
 from xCoordinate import xCoordinate
 
 
-def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength):
+def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv):
+
+    sigma = 1.514705513 * (10**-3)
+    v1 = 0.007692308
+
+    k35 = (v0 * sigma * v1) / Dv
+
+    Dp = 3.6 * (10**-6)
+
+    k21 = Dv / Dp
+
     k1 = 51923.07639
     k2 = 694.4444444
-    k35 = 0.0129462015
-    k21 = 10
     m0 = 12
     relax = 1.45
     k33 = 0.00036
