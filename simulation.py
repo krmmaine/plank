@@ -7,6 +7,7 @@ from move import move
 from updatePro import updatePro
 from updateVEGF import updateVEGF
 from newUpdateVEGF import newUpdateVEGF
+from updateVEGFfib import updateVEGFfib
 from updateFib import updateFib
 from numpy import zeros
 from graph import createGraph
@@ -238,7 +239,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                         fibcap = (fib[0][x-1] + fib[0][x]) / 2
                     if fibcap < fibThreshold:
                         rand = 2
-                file = move(cell, time, stay, left, right, up, rand, yPos, xPos, occupied, fib, vegf, pro, movement, file, T)
+                file = move(cell, time, stay, left, right, up, rand, yPos, xPos, occupied, fib, vegf, pro, movement, file, T, xSteps, ySteps)
 
                 # ANASTOMOSIS
                 '''
@@ -270,8 +271,10 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
             break
 
         # updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
-        vegfOld, vegf = newUpdateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
-        updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
+        # vegfOld, vegf = newUpdateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
+        # updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
+        updateVEGFfib(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, fib, fibOld, pro, proOld, k,
+                      tolerance, h, xLength, v0, Dv)
         updatePro(ySubstrate, xSteps, densityScale, occupiedOld, pro, proOld, k, vegfOld)
 
         print("time = " + str(time))
