@@ -189,6 +189,11 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                     if fibcap < fibThreshold:
                         rand = 2
                 file = move(cell, time, stay, left, right, up, rand, yPos, xPos, occupied, fib, vegf, pro, movement, file, T)
+
+                # Try to fill the fibronectin behind the moving tip cell
+                if len(movement) > 1:
+                        fib[yPos[cell][time - 1]][xPos[cell][time - 1]] = 1
+
                 '''
                 # ANASTOMOSIS
                 
