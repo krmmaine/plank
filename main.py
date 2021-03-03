@@ -23,7 +23,7 @@ def main():
     ySubstrate = ySteps * 2 - 1
     # totNumCells must be less than or equal to xStep so there will be a place to put all the cells
     totNumCells = 5
-    # totNumCells = 2
+    # totNumCells = 1
     densityScale = xSteps/totNumCells
     maxCell = 100
     numTimeSteps = 21600
@@ -78,6 +78,9 @@ def main():
                movement, maxCell, birthTime, divideTime)
     print("time elapsed:\n")
     print(str((time.time()-start)/60/60) + "hours")
+
+    file3 = open("parameters.txt", "a")
+    file3.write("time elapsed: " + str((time.time()-start)/60/60) + "hours")
 
     return
 

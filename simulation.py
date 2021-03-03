@@ -6,6 +6,8 @@ from pMove import pMove
 from move import move
 from updatePro import updatePro
 from updateVEGF import updateVEGF
+from newUpdateVEGF import newUpdateVEGF
+from updateVEGFfib import updateVEGFfib
 from updateFib import updateFib
 from numpy import zeros
 from graph import createGraph
@@ -24,6 +26,9 @@ import matplotlib.backends.backend_pdf
 def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
                densityScale, lamda, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector,
                movement, maxCell, birthTime, divideTime):
+    v0 = 0.04
+    Dv = 3.6 * (10 ** -5)
+
     densityMax = 6
     k18 = 0.55555555
     k20 = 0.0496031736
@@ -31,12 +36,20 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
     k26 = .00001859
     m1 = 2
     # child = 0.25      # 12 hours iteration 5400
-    child = 0.125     # 6 hours iteration 2700
-    # child = 0.0625      # 3 hours iteration 1350
+    # child = 0.125     # 6 hours iteration 2700
+    child = 0.0625      # 3 hours iteration 1350
     fibThreshold = 0.6
     workspace = zeros((ySteps, xSteps))
     file = open("tracking_backtracks.txt", "w")
     file2 = open("prolif_death.txt", "w")
+    file3 = open("parameters.txt", "w")
+
+    file3.write("PARAMETERS\n")
+    file3.write("# hours until branching: " + str(48*child) + "\n")
+    file3.write("VEGF flux term: " + str(v0) + "\n")
+    file3.write("VEGF concentration: " + str(v0*Dv) + "\n")
+    prolif = 0
+    anastomosis = 0
 
     # Cycle through time steps
     for time in range(numTimeSteps-1):
@@ -56,7 +69,9 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
             # not including dividing and death right now because it doesn't work with anastomosis
             #'''
             # DETERMINE IF CELL HAS DIVIDED OR DIED
+            #'''
             if deathTime[cell] == numTimeSteps - 1 and y > 0:
+                prolif = 1
                 # add statement to test if dead
                 # cell dies/leaves simulation if it reaches the tumour
                 if y == ySteps - 1:
@@ -161,15 +176,51 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                         file2.write("random number: " + str(randomNum) + "\n")
                         file2.write("G: " + str(G) + "\n")
                         file2.write("CELL DIVIDED")
-                        xPos[totNumCells][time+1] = x
-                        yPos[totNumCells][time+1] = y
-                        occupied[y][x] += 1
+                        divided = 1
+
+                        if movement[len(movement)-1] == 0 or movement[len(movement)-1] == 1:
+                            occupied[y][x + 1] += 1     # add cell to the right
+                            occupied[y][x] -= 1         # subtract cell from current location
+                            occupied[y][x - 1] += 1     # add cell to the left
+
+                            createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
+
+                            xPos[totNumCells][time+1] = x + 1           # new cell is to the right
+                            yPos[totNumCells][time+1] = y
+
+                            workspace[yPos[cell][time]][xPos[cell][time]] = 0
+
+                            xPos[cell][time] = x - 1                # cell that divided is left
+                            xPos[cell][time+1] = x - 1              # predicted location. if it stays it will be here.
+                            x = xPos[cell][time]                    # reset x because position has changed
+
+                        if movement[len(movement) - 1] == 2 or movement[len(movement) - 1] == 3:
+                            occupied[y - 1][x] += 1  # add cell up
+                            occupied[y][x] -= 1  # subtract cell from current location
+                            occupied[y + 1][x] += 1  # add cell down
+
+                            createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
+
+                            xPos[totNumCells][time + 1] = x
+                            yPos[totNumCells][time + 1] = y - 1     # new cell is up
+
+                            workspace[yPos[cell][time]][xPos[cell][time]] = 0
+
+                            yPos[cell][time] = y + 1                # cell that divided is down
+                            yPos[cell][time + 1] = y + 1            # predicted location. if it stays it will be here.
+                            y = yPos[cell][time]                    # reset y because position has changed
+
+                        workspace[yPos[cell][time]][xPos[cell][time]] = (cell+1)*3
+                        workspace[yPos[totNumCells][time + 1]][xPos[totNumCells][time + 1]] = (totNumCells+1)*3
+
                         deathTime[totNumCells] = numTimeSteps - 1
                         birthTime[totNumCells] = time
                         divideTime[cell] = time
                         divideTime[totNumCells] = time
                         totNumCells += 1
-                        createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
+                        createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time+1)
+            
+            #'''
 
             # DETERMINE IF/WHERE THE CELL MOVES
             if deathTime[cell] == numTimeSteps - 1:
@@ -188,25 +239,28 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                         fibcap = (fib[0][x-1] + fib[0][x]) / 2
                     if fibcap < fibThreshold:
                         rand = 2
-                file = move(cell, time, stay, left, right, up, rand, yPos, xPos, occupied, fib, vegf, pro, movement, file, T)
-                '''
+                file = move(cell, time, stay, left, right, up, rand, yPos, xPos, occupied, fib, vegf, pro, movement, file, T, xSteps, ySteps)
+
                 # ANASTOMOSIS
-                
+                '''
                 if yPos[cell][time + 1] > 0:
+                    anastomosis = 1
                     if workspace[yPos[cell][time + 1]][xPos[cell][time + 1]] != 0 and \
-                            workspace[yPos[cell][time + 1]][xPos[cell][time + 1]] != cell + 2 and \
-                            workspace[yPos[cell][time + 1]][xPos[cell][time + 1]] != cell + 3.5:
+                            workspace[yPos[cell][time + 1]][xPos[cell][time + 1]] != (cell+1)*2 and \
+                            workspace[yPos[cell][time + 1]][xPos[cell][time + 1]] != (cell+1)*3:
                         print("cell ran into another capillary")
                         deathTime[cell] = time + 1
                         occupied[yPos[cell][time + 1]][xPos[cell][time + 1]] -= 1
 
-                workspace[yPos[cell][time]][xPos[cell][time]] = cell + 2
-                workspace[yPos[cell][time + 1]][xPos[cell][time + 1]] = cell + 3.5
+                workspace[yPos[cell][time]][xPos[cell][time]] = (cell+1)*2
+                workspace[yPos[cell][time + 1]][xPos[cell][time + 1]] = (cell+1)*3
                 '''
+
 
                 # workspace without anastomosis
                 workspace[yPos[cell][time]][xPos[cell][time]] = 1
                 workspace[yPos[cell][time+1]][xPos[cell][time+1]] = 5
+
 
         total = 0
         for cell in range(totNumCells):
@@ -216,13 +270,26 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
             print("ALL OF THE CELLS ARE DEAD")
             break
 
-        updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength)
-        updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
+        # updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
+        # vegfOld, vegf = newUpdateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
+        # updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
+        updateVEGFfib(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, fib, fibOld, pro, proOld, k,
+                      tolerance, h, xLength, v0, Dv)
         updatePro(ySubstrate, xSteps, densityScale, occupiedOld, pro, proOld, k, vegfOld)
 
         print("time = " + str(time))
 
         if time % 500 == 0:
             createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
+
+    if prolif == 1:
+        file3.write("Branching and Death: YES\n")
+    else:
+        file3.write("Branching and Death: NO\n")
+
+    if anastomosis == 1:
+        file3.write("Anastomosis: YES\n")
+    else:
+        file3.write("Anastomosis: NO\n")
 
     return
