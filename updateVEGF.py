@@ -34,7 +34,7 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
         VEGFdiff = wallVEGFatJ - vegf[0][x]
         if VEGFdiff < 0:
             VEGFdiff = 0
-        vegfOld[0][x] = vegf[0][x]
+        vegfOld[0][x] = vegf[0][x]          # possibly put before function
         # update VEGF concentration in capillary using equation 46
         vegf[0][x] = vegf[0][x] + k * (-k1 * vegf[0][x] * density / (1 + vegf[0][x]) + k2 * VEGFdiff)
         if vegf[0][x] < 0:
@@ -43,7 +43,7 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
 # initialize v: value of the previous time step
     for y in range(1, ySubstrate, 1):
         if y % 2 == 0:
-            for x in range(xSteps - 1):
+            for x in range(xSteps - 1):         # copy whole row instead of iterating
                 v[y][x] = vegf[y][x]
         else:
             for x in range(xSteps):
@@ -62,7 +62,7 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
         if v[ySubstrate - 1][0] - vOld > tolerance or v[ySubstrate - 1][0] - vOld < -tolerance:
             intol = 0
 
-        for x in range(1, xSteps - 2, 1):
+        for x in range(1, xSteps - 2, 1):           # combine with for loop at 87
             vOld = v[ySubstrate - 1][x]
             # use EQ 65 and derivation on page 179 to update VEGF concentration at upper boundary
             v[ySubstrate - 1][x] = k35 * h * ((1 - cos(2 * pi * xCoordinate(x, ySubstrate - 1, xSteps, xLength))) ** m0) \
@@ -99,7 +99,7 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
             intol = 0
 
     # Cycle through interior rows and calculate new VEGF concentration
-        for y in range(ySubstrate - 3, 2, -1):
+        for y in range(ySubstrate - 3, 2, -1):      # change to include boundary condition
             # using equation 70 derivation on page 179 calculate vegf at x = 0
             vOld = v[y][0]
             v[y][0] = v[y][1]
@@ -107,7 +107,7 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
                 intol = 0
 
             # if row is even number of substrate meshpoints in x is xsteps-1
-            if y % 2 == 0:
+            if y % 2 == 0:      # put on inside of loop
                 for x in range(1, xSteps - 2, 1):  # minus 2 because last meshpoint has a boundary condition
                     # densityScale is squared because density in ECM is per unit area not length
                     # average density of cell meshpoint to the right and left
@@ -149,7 +149,7 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
                 if v[y][xSteps - 1] - vOld > tolerance or v[y][xSteps - 1] - vOld < -tolerance:
                     intol = 0
 
-    # calculate VEGF concentration at boundary row y = 2
+    # calculate VEGF concentration at boundary row y = 2 include in for loop above
         # using equation 70 derivation on page 179 calculate vegf at x = 0
         vOld = v[2][0]
         v[2][0] = v[2][1]
@@ -175,7 +175,7 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
         v[1][0] = v[1][1]
         if v[1][0] - vOld > tolerance or v[1][0] - vOld < -tolerance:
             intol = 0
-        for x in range(1, xSteps - 1, 1):
+        for x in range(1, xSteps - 1, 1):           # include in large for loop above
             vOld = v[1][x]
             # Take average because there is no meshpoint in the capillary directly below
             v[1][x] = 1 / (k33 + h) * (k33 * v[3][x] + h * (vegfOld[0][x - 1] + vegfOld[0][x]) / 2)
@@ -190,7 +190,7 @@ def updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, 
     # Cycle through VEGF meshpoints and set VEGF at time step j+1
     for y in range(1, ySubstrate, 1):
         # if y is even: number of substrate meshpoints in x is xSteps - 1
-        if y % 2 == 0:
+        if y % 2 == 0:          # include if statement into x for loop
             for x in range(xSteps - 1):
                 vegfOld[y][x] = vegf[y][x]
                 vegf[y][x] = v[y][x]
