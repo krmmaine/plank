@@ -26,7 +26,8 @@ import matplotlib.backends.backend_pdf
 def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
                densityScale, lamda, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector,
                movement, maxCell, birthTime, divideTime):
-    v0 = 0.04
+    # v0 = 0.04
+    v0 = 0.2
     Dv = 3.6 * (10 ** -5)
 
     densityMax = 6
@@ -270,17 +271,19 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
             print("ALL OF THE CELLS ARE DEAD")
             break
 
-        # updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
-        # vegfOld, vegf = newUpdateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
-        # updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
-        updateVEGFfib(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, fib, fibOld, pro, proOld, k,
-                      tolerance, h, xLength, v0, Dv)
+        #updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
+        vegf = newUpdateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
+        updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
+        # updateVEGFfib(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, fib, fibOld, pro, proOld, k,
+        #               tolerance, h, xLength, v0, Dv)
         updatePro(ySubstrate, xSteps, densityScale, occupiedOld, pro, proOld, k, vegfOld)
 
         print("time = " + str(time))
 
+
         if time % 500 == 0:
             createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
+
 
     if prolif == 1:
         file3.write("Branching and Death: YES\n")
