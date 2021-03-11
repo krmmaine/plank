@@ -26,8 +26,8 @@ import matplotlib.backends.backend_pdf
 def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
                densityScale, lamda, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector,
                movement, maxCell, birthTime, divideTime):
-    v0 = 0.04
-    # v0 = 0.2
+    # v0 = 0.04
+    v0 = 0.2
     Dv = 3.6 * (10 ** -5)
 
     densityMax = 6
