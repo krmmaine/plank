@@ -135,21 +135,10 @@ def newUpdateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, 
                 if v[y][stop] - vOld > tolerance or v[y][stop] - vOld < -tolerance:
                     intol = 0
 
-    # Cycle through VEGF meshpoints and set VEGF at time step j+1
-    for y in range(1, ySubstrate, 1):
-        # if y is even: number of substrate meshpoints in x is xSteps - 1
-        if y % 2 == 0:
-            for x in range(xSteps - 1):
-                vegfOld[y][x] = vegf[y][x]
-                vegf[y][x] = v[y][x]
-                if vegf[y][x] < 0:
-                    vegf[y][x] = 0
-        # if y is odd: number of substrate meshpoints in x is xSteps
-        else:
-            for x in range(xSteps):
-                vegfOld[y][x] = vegf[y][x]
-                vegf[y][x] = v[y][x]
-                if vegf[y][x] < 0:
-                    vegf[y][x] = 0
 
-    return vegfOld, vegf
+
+    vegfOld[1:ySubstrate, :] = vegf[1:ySubstrate, :]
+    vegf[1:ySubstrate, :] = v[1:ySubstrate, :]
+    vegf = vegf.clip(min=0)
+
+    return vegf
