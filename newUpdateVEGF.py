@@ -135,8 +135,6 @@ def newUpdateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, 
                 if v[y][stop] - vOld > tolerance or v[y][stop] - vOld < -tolerance:
                     intol = 0
 
-
-
     vegfOld[1:ySubstrate, :] = vegf[1:ySubstrate, :]
     vegf[1:ySubstrate, :] = v[1:ySubstrate, :]
     vegf = vegf.clip(min=0)

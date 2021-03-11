@@ -31,6 +31,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
     Dv = 3.6 * (10 ** -5)
 
     densityMax = 6
+    k6 = 0.012048193
     k18 = 0.55555555
     k20 = 0.0496031736
     k25 = 5736.899771
@@ -87,26 +88,26 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
 
                 #LEFT
                 if x > 0:
-                    proMinus0 = proMinus0 + pro[2*y][x-1]
-                    proMinus1 = proMinus1 + proOld[2*y][x-1]
+                    proMinus0 = proMinus0 + pro[2*y][x-1] / (1 + k6 * fib[2*y][x-1])
+                    proMinus1 = proMinus1 + proOld[2*y][x-1] / (1 + k6 * fibOld[2*y][x-1])
                     count += 1
 
                 #RIGHT
-                if x < xSteps-1:
-                    proMinus0 = proMinus0 + pro[2*y][x]
-                    proMinus1 = proMinus1 + proOld[2*y][x]
+                if x < xSteps - 1:
+                    proMinus0 = proMinus0 + pro[2*y][x] / (1 + k6 * fib[2*y][x])
+                    proMinus1 = proMinus1 + proOld[2*y][x] / (1 + k6 * fibOld[2*y][x])
                     count += 1
 
                 #UP
                 if y > 0:
-                    proMinus0 = proMinus0 + pro[2*y-1][x]
-                    proMinus1 = proMinus1 + proOld[2*y-1][x]
+                    proMinus0 = proMinus0 + pro[2*y-1][x] / (1 + k6 * fib[2*y-1][x])
+                    proMinus1 = proMinus1 + proOld[2*y-1][x] / (1 + k6 * fibOld[2*y-1][x])
                     count += 1
 
                 #DOWN
-                if y < ySteps:
-                    proMinus0 = proMinus0 + pro[2*y+1][x-1]
-                    proMinus1 = proMinus1 + proOld[2*y+1][x-1]
+                if y < ySteps - 1:
+                    proMinus0 = proMinus0 + pro[2*y+1][x-1] / (1 + k6 * fib[2*y+1][x-1])
+                    proMinus1 = proMinus1 + proOld[2*y+1][x-1] / (1 + k6 * fibOld[2*y+1][x-1])
                     count += 1
 
                 proMinus0 = proMinus0 / count
@@ -271,8 +272,8 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
             print("ALL OF THE CELLS ARE DEAD")
             break
 
-        #updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
-        vegf = newUpdateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
+        updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
+        # vegf = newUpdateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
         updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro, tolerance, h)
         # updateVEGFfib(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, fib, fibOld, pro, proOld, k,
         #               tolerance, h, xLength, v0, Dv)
