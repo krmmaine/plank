@@ -6,6 +6,7 @@ from init import init
 from stepSize import stepSize
 from lamda import lamda
 from simulation import simulation
+from data_output import data_output
 
 import time
 from numpy import linspace
@@ -17,16 +18,16 @@ def main():
     start = time.time()
     yLength = 0.5
     xLength = 1
-    xSteps = 201
+    xSteps = 100
     # xSteps = 21
     ySteps = int(xSteps * (yLength/xLength) + 0.5)  # need to add the 0.5 so that it rounds to the correct number
     ySubstrate = ySteps * 2 - 1
     # totNumCells must be less than or equal to xStep so there will be a place to put all the cells
-    totNumCells = 5
+    totNumCells = 1
     # totNumCells = 1
     densityScale = xSteps/totNumCells
     maxCell = 100
-    numTimeSteps = 21600
+    numTimeSteps = 2000
     totalTime = 0.06912
     xPos = zeros((maxCell, numTimeSteps), dtype=int)
     yPos = zeros((maxCell, numTimeSteps), dtype=int)
@@ -73,9 +74,10 @@ def main():
     movement = []
 
     init(xSteps, totNumCells, xPos, yPos, occupied, deathTime, numTimeSteps)
-    simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
+    celltrackingvector = simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
                densityScale, lam, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector,
                movement, maxCell, birthTime, divideTime)
+    data_output(celltrackingvector,xLength,xSteps,totalTime,numTimeSteps)
     print("time elapsed:\n")
     print(str((time.time()-start)/60/60) + "hours")
 

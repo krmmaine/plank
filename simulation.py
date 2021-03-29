@@ -26,6 +26,9 @@ import matplotlib.backends.backend_pdf
 def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells, xPos, yPos, deathTime, pro, proOld,
                densityScale, lamda, k, fib, vegf, ySubstrate, vegfOld, tolerance, h, xLength, fibOld, xVector, yVector,
                movement, maxCell, birthTime, divideTime):
+
+    # Start data vector with spaces for all cells, and 9 extra per cell (to account for dividing)
+    celltrackingvector = celltrackingvector = [[[],[],[]] for i in range(totNumCells*10)]
     # v0 = 0.04
     v0 = 0.2
     Dv = 3.6 * (10 ** -5)
@@ -66,6 +69,11 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
             y = yPos[cell][time]
             xPos[cell][time+1] = x
             yPos[cell][time+1] = y
+
+            # Add the time, x, y to the celltrackingvector
+            celltrackingvector[cell][0].append(time)
+            celltrackingvector[cell][1].append(x)
+            celltrackingvector[cell][2].append(y)
 
             # If cell has left the capillary
             # not including dividing and death right now because it doesn't work with anastomosis
@@ -270,7 +278,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                 total += 1
         if total == totNumCells:
             print("ALL OF THE CELLS ARE DEAD")
-            break
+            return celltrackingvector # Changed so we always get data output
 
         updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
         # vegf = newUpdateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
@@ -296,4 +304,4 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
     else:
         file3.write("Anastomosis: NO\n")
 
-    return
+    return celltrackingvector
