@@ -227,9 +227,9 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
             # DETERMINE IF/WHERE THE CELL MOVES
             if deathTime[cell] == numTimeSteps - 1:
                 stay = pStay(y, lamda, k)
-                left, T = pMove(x, y, 0, pro, fib, vegf, xSteps, ySteps, lamda, k)
-                right, T = pMove(x, y, 1, pro, fib, vegf, xSteps, ySteps, lamda, k)
-                up, T = pMove(x, y, 2, pro, fib, vegf, xSteps, ySteps, lamda, k)
+                left, T = pMove(x, y, 0, pro, fib, vegf, xSteps, ySteps, lamda, k, movement)
+                right, T = pMove(x, y, 1, pro, fib, vegf, xSteps, ySteps, lamda, k, movement)
+                up, T = pMove(x, y, 2, pro, fib, vegf, xSteps, ySteps, lamda, k, movement)
                 rand = random()
                 # Check if cell can escape the capillary
                 if y == 0:
@@ -278,6 +278,10 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
         # updateVEGFfib(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, fib, fibOld, pro, proOld, k,
         #               tolerance, h, xLength, v0, Dv)
         updatePro(ySubstrate, xSteps, densityScale, occupiedOld, pro, proOld, k, vegfOld)
+
+        for cell in range(totNumCells):
+            if yPos[cell][time] > 0:
+                fib[yPos[cell][time]][xPos[cell][time]] = 1
 
         print("time = " + str(time))
 
