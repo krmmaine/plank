@@ -167,7 +167,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                     file2.write("CELL DIED")
                     deathTime[cell] = time
                     occupied[y][x] -= 1
-                    createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
+                    #createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
 
                 elif randomNum < deathProb + divideProb:
                     if totNumCells >= maxCell:
@@ -193,7 +193,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                             occupied[y][x] -= 1         # subtract cell from current location
                             occupied[y][x - 1] += 1     # add cell to the left
 
-                            createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
+                            #createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
 
                             xPos[totNumCells][time+1] = x + 1           # new cell is to the right
                             yPos[totNumCells][time+1] = y
@@ -209,7 +209,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                             occupied[y][x] -= 1  # subtract cell from current location
                             occupied[y + 1][x] += 1  # add cell down
 
-                            createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
+                            #createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
 
                             xPos[totNumCells][time + 1] = x
                             yPos[totNumCells][time + 1] = y - 1     # new cell is up
@@ -228,7 +228,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                         divideTime[cell] = time
                         divideTime[totNumCells] = time
                         totNumCells += 1
-                        createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time+1)
+                        #createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time+1)
             
             #'''
 
@@ -278,6 +278,7 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
                 total += 1
         if total == totNumCells:
             print("ALL OF THE CELLS ARE DEAD")
+            createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time + 1) # Added so it just prints at the end
             return celltrackingvector # Changed so we always get data output
 
         updateVEGF(ySubstrate, xSteps, densityScale, occupiedOld, vegf, vegfOld, k, tolerance, h, xLength, v0, Dv)
@@ -290,18 +291,18 @@ def simulation(numTimeSteps, xSteps, ySteps, occupied, occupiedOld, totNumCells,
         print("time = " + str(time))
 
 
-        if time % 500 == 0:
-            createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
+     #   if time % 500 == 0:
+     #       createGraph(ySubstrate, xSteps, vegf, fib, pro, xVector, yVector, workspace, time)
 
 
-    if prolif == 1:
-        file3.write("Branching and Death: YES\n")
-    else:
-        file3.write("Branching and Death: NO\n")
+    #if prolif == 1:
+    #    file3.write("Branching and Death: YES\n")
+    #else:
+    #    file3.write("Branching and Death: NO\n")
 
-    if anastomosis == 1:
-        file3.write("Anastomosis: YES\n")
-    else:
-        file3.write("Anastomosis: NO\n")
+    #if anastomosis == 1:
+    #    file3.write("Anastomosis: YES\n")
+    #else:
+    #    file3.write("Anastomosis: NO\n")
 
     return celltrackingvector

@@ -7,7 +7,7 @@ def updateFib(ySubstrate, xSteps, densityScale, occupiedOld, fib, fibOld, k, pro
     k5 = 1740294.403
     k6 = 0.012048193
     relax2 = 1
-    k22 = 0.0001
+    k22 = 0 #Changed so that we are not considering fibronectin diffusion at all
     k23 = 154.3209877
 
 # update fibronectin concentration in capillary
