@@ -18,7 +18,7 @@ def main():
     start = time.time()
     yLength = 0.5
     xLength = 1
-    xSteps = 100
+    xSteps = 200
     # xSteps = 21
     ySteps = int(xSteps * (yLength/xLength) + 0.5)  # need to add the 0.5 so that it rounds to the correct number
     ySubstrate = ySteps * 2 - 1
@@ -27,7 +27,7 @@ def main():
     # totNumCells = 1
     densityScale = xSteps/totNumCells
     maxCell = 100
-    numTimeSteps = 2000
+    numTimeSteps = 21600
     totalTime = 0.06912
     xPos = zeros((maxCell, numTimeSteps), dtype=int)
     yPos = zeros((maxCell, numTimeSteps), dtype=int)
