@@ -5,12 +5,12 @@ import csv
 # Calculates the FMIx, FMIy, Directness, Euclidean distance, Velocity
 
 def data_output(celltrackingvector,xlength,xsteps,totalTime,numTimesteps):
-    with open('migration_data.csv', 'w') as csvfile:
+    with open('6_migration_data.csv', 'w') as csvfile:
         filewriter = csv.writer(csvfile, delimiter=',',
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
         filewriter.writerow(['Cell Number', 'Accumulated Distance', 'Euclidian Distance', 'Directness', 'FMI_y', 'FMI_x',
-                             'Accumulated Distance (mm)', 'Euclidian Distance (mm)', 'Euclidian Velocity (mm/hr)',
-                             'Accumulated Velocity (mm/hr) ', 'Time (hr)'])
+                             'Accumulated Distance (um)', 'Euclidian Distance (um)', 'Euclidian Velocity (um/min)',
+                             'Accumulated Velocity (um/min) ', 'Time (min)'])
 
         for cell in range(len(celltrackingvector)):
             # Don't measure empty vectors
@@ -40,10 +40,10 @@ def data_output(celltrackingvector,xlength,xsteps,totalTime,numTimesteps):
             FMI_y = (celltrackingvector[cell][2][-1] - celltrackingvector[cell][2][0]) / dist_accum
             FMI_x = (celltrackingvector[cell][1][-1] - celltrackingvector[cell][1][0]) / dist_accum
 
-            dist_accum_nondimensionalized = dist_accum * (xlength/xsteps)
-            dist_euclid_nondimensionalized = dist_euclid * (xlength/xsteps)
+            dist_accum_nondimensionalized = dist_accum * (xlength/xsteps) * 1000 # Gives distance in um
+            dist_euclid_nondimensionalized = dist_euclid * (xlength/xsteps) * 1000 # Gives distance in um
 
-            time_nondimensionalized = (celltrackingvector[cell][0][-1] - celltrackingvector[cell][0][0]) * (totalTime/numTimesteps)
+            time_nondimensionalized = (celltrackingvector[cell][0][-1] - celltrackingvector[cell][0][0]) * 8 / 60 # each time step is 8 seconds
             velocity_euclid_nondimensionalized = dist_euclid_nondimensionalized / time_nondimensionalized
             velocity_accum_nondimensionalized = dist_accum_nondimensionalized / time_nondimensionalized
 
